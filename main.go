@@ -34,5 +34,6 @@ func main() {
 	http.Handle("/", router)
 
 	http.ListenAndServe(":8000", nil)
+	http.ListenAndServe(":8000/signin", nil)
 
 }
