@@ -1,0 +1,3 @@
+-- DROP TABLE USERS;
+
+DROP TYPE sex;

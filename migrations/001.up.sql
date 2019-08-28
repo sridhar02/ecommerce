@@ -1,9 +1,1 @@
-CREATE TABLE USERS(
-
-id BIGSERIAL NOT NULL PRIMARY KEY,X 
-
-
-
-
-
- );
+CREATE DATABASE ecommerce_website;

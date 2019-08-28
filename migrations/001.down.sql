@@ -1,1 +1,1 @@
-DROP TABLE USERS;
+DROP DATABASE ecommerce_website;
