@@ -25,7 +25,7 @@ class Login extends Component {
           />
           <button class="login-button">Login</button>
           <div class="space">
-            <a class="create-account" href="#">
+            <a class="create-account" href="#" onClick={this.showSignup}>
               New to Flipkart? Create an account
             </a>
           </div>
@@ -43,17 +43,47 @@ class Signup extends Component {
         <input type="text" placeholder="Email" />
         <input placeholder="Enter your phone number" />
         <input type="password" placeholder="Enter your password" />
+        <div class="space">
+          <a class="create-account" href="#" onClick={this.props.showLogin}>
+            Existing account/login
+          </a>
+        </div>
       </div>
     );
   }
 }
 
-function App() {
-  return (
-    <div className="App">
-      <Login />
-    </div>
-  );
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      screen: "Login"
+    };
+  }
+
+  showLogin = () => {
+    this.setState({
+      screen: "Login"
+    });
+  };
+
+  showSignup = () => {
+    this.setState({
+      screen: "Signup"
+    });
+  };
+
+  render() {
+    return (
+      <div className="App">
+        {this.state.screen === "Login" ? (
+          <Login showSignup={this.showSignup} />
+        ) : (
+          <Signup showLogin={this.showLogin} />
+        )}
+      </div>
+    );
+  }
 }
 
 export default App;
