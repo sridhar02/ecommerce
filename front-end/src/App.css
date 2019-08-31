@@ -14,7 +14,7 @@
   flex: center;
 }
 .space {
-  padding-top: 60px;
+  padding-top: 40px;
 }
 .login {
   font-size: 29px;
@@ -70,4 +70,39 @@ input::placeholder {
   /*margin: 0 auto;*/
   display: inline-block;
   flex-direction: column;
+}
+
+.signup-sidebar{
+  display: flex;
+  flex-direction: column;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.signup-layout{
+   margin: 15px;
+  display: flex;
+  flex-direction: column;
+  height: 600px;
+}
+ .text{
+   margin-top: 20px;
+   padding:10px; 
+ }
+
+ .signup{
+  font-size: 29px;
+  font-weight: 500;
+ }
+
+.signup-button{
+  margin-top: 10px;
+  padding: 10px;
+  background: #fb641b;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+  border: none;
+  color: #fff;
+}
+.space1{
+  padding: 15px;
 }

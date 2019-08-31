@@ -5,27 +5,27 @@ import "./App.css";
 class Login extends Component {
   render() {
     return (
-      <div class="main-section">
-        <div class="side-bar">
-          <span class="login">Login</span>
-          <p class="display-text">
+      <div className="main-section">
+        <div className="side-bar">
+          <span className="login">Login</span>
+          <p className="display-text">
             <span>Get access to your Orders, Wishlist and Recommendations</span>
           </p>
         </div>
-        <div class="login-layout">
+        <div className="login-layout">
           <input
             type="text"
             placeholder="Enter Email/Mobile Number"
-            class="login-text"
+            className="login-text"
           />
           <input
             type="password"
             placeholder="Enter password"
-            class="password"
+            className="password"
           />
-          <button class="login-button">Login</button>
-          <div class="space">
-            <a class="create-account" href="#" onClick={this.showSignup}>
+          <button className="login-button">Login</button>
+          <div className="space">
+            <a className="create-account" href="#" onClick={this.props.showSignup}>
               New to Flipkart? Create an account
             </a>
           </div>
@@ -38,16 +38,25 @@ class Login extends Component {
 class Signup extends Component {
   render() {
     return (
-      <div>
-        <input type="text" placeholder="Enter your username" />
-        <input type="text" placeholder="Email" />
-        <input placeholder="Enter your phone number" />
-        <input type="password" placeholder="Enter your password" />
-        <div class="space">
-          <a class="create-account" href="#" onClick={this.props.showLogin}>
-            Existing account/login
-          </a>
-        </div>
+      <div className="main-section">
+          <div className="side-bar">
+            <span className="signup">Signup</span>
+            <p className="display-text">
+              <span>Get access to your Orders, Wishlist and Recommendations</span>
+            </p>
+          </div>
+          <div className="signup-layout">
+            <input type="text" placeholder="Enter your username" className="login-text"/>
+            <input type="text" placeholder="Email" className="text" />
+            <input placeholder="Enter your phone number" className="text" />
+            <input type="password" placeholder="Enter your password" className="text"/>
+            <button className="signup-button">Continue</button>
+            <div className="space1">
+              <a class="create-account" href="#" onClick={this.props.showLogin}>
+                Existing account/login
+              </a>
+            </div>
+          </div>
       </div>
     );
   }
@@ -75,7 +84,7 @@ class App extends React.Component {
 
   render() {
     return (
-      <div className="App">
+      <div >
         {this.state.screen === "Login" ? (
           <Login showSignup={this.showSignup} />
         ) : (
