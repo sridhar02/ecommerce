@@ -58,22 +58,28 @@ func postUserHandler(c *gin.Context, db *sql.DB) {
 
 func PostUserSigninPageHandler(c *gin.Context, db *sql.DB) {
 
-	email := c.PostForm("email")
-	password := c.PostForm("password")
+	user := User{}
+	err := c.BindJSON(&user)
+	if err != nil {
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
 
 	var Password, Id string
-	row := db.QueryRow(`SELECT password,id FROM users WHERE email=$!`, email)
-	err := row.Scan(&Password, &Id)
+	row := db.QueryRow(`SELECT password,id FROM users WHERE email=$1`, user.Email)
+	err = row.Scan(&Password, &Id)
 	if err != nil {
 		fmt.Println(err)
 		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
-	if Password != password {
-		c.Redirect(http.StatusFound, "http://localhost:8000/login")
+	if Password != user.Password {
+		c.Status(http.StatusUnauthorized)
 		return
 	}
-	c.Redirect(http.StatusFound, "http://localhost:3000/")
+	// c.Redirect(http.StatusFound, "http://localhost:3000/")
+
+	c.Status(http.StatusCreated)
 }
 
 func main() {

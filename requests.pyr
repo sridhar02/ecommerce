@@ -1,7 +1,13 @@
 post('http://localhost:8000/user/signup',
 	json={
 		'username': 'srisadasd',
-		'email': 'test+1@example.com'
+		'email': 'test+1@example.com',
 		'phonenumber': '9550880047',
+		'password':'ttff565f67',
+	})
+
+post('http://localhost:8000/user/sign_in',
+	json ={
+		'email': 'test+1@example.com',
 		'password':'ttff565f67',
 	})
