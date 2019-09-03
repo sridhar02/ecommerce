@@ -8,29 +8,35 @@ import (
 	_ "github.com/lib/pq"
 	"log"
 	"net/http"
+	"time"
 )
 
 type User struct {
 	ID          string    `json:"id,omiempty`
 	Username    string    `json:"username,omiempty"`
-	Password    string    `json:"password,omiempty"`
-	Age         int       `json:"age,omiempty"`
-	Sex         string    `json:"sex,omiempty"`
-	Phonenumber string    `json:"phonenumber,omiempty"`
 	Email       string    `json:"email,omiempty"`
+	Phonenumber string    `json:"phonenumber,omiempty"`
+	Password    string    `json:"password,omiempty"`
 	CreatedAt   time.Time `json:"created_at,omitempty"`
 	UpdatedAt   time.Time `json:"updated_at,omitempty"`
 }
 
 func CreateUser(db *sql.DB, user User) error {
 
-	_, err = db.Exec(`INSERT INTO users(username,email,password,phonenumber)
-									VALUES($1,$2,$3,$4)`,
+	_, err := db.Exec(`INSERT INTO users(username,email,password,phonenumber,created_at,updated_at)
+									VALUES($1,$2,$3,$4,$5,$6)`,
 
 		user.Username,
 		user.Email,
-		user.password,
-		user.Phonenumber)
+		user.Password,
+		user.Phonenumber,
+		time.Now().Format(time.RFC3339),
+		time.Now().Format(time.RFC3339))
+
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func postUserHandler(c *gin.Context, db *sql.DB) {
@@ -48,6 +54,26 @@ func postUserHandler(c *gin.Context, db *sql.DB) {
 		return
 	}
 	c.Status(http.StatusCreated)
+}
+
+func PostUserSigninPageHandler(c *gin.Context, db *sql.DB) {
+
+	email := c.PostForm("email")
+	password := c.PostForm("password")
+
+	var Password, Id string
+	row := db.QueryRow(`SELECT password,id FROM users WHERE email=$!`, email)
+	err := row.Scan(&Password, &Id)
+	if err != nil {
+		fmt.Println(err)
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+	if Password != password {
+		c.Redirect(http.StatusFound, "http://localhost:8000/login")
+		return
+	}
+	c.Redirect(http.StatusFound, "http://localhost:3000/")
 }
 
 func main() {
@@ -73,7 +99,8 @@ func main() {
 	router := gin.Default()
 	http.Handle("/", router)
 
-	router.POST("/user/signup", func(c *gin.context) { postUserHandler(c, db) })
+	router.POST("/user/signup", func(c *gin.Context) { postUserHandler(c, db) })
+	router.POST("/user/sign_in", func(c *gin.Context) { PostUserSigninPageHandler(c, db) })
 
 	http.ListenAndServe(":8000", nil)
 	http.ListenAndServe(":8000/signin", nil)
