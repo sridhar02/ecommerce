@@ -9,6 +9,7 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -22,7 +23,7 @@ type User struct {
 	UpdatedAt   time.Time `json:"updated_at,omitempty"`
 }
 type Login struct {
-	userId    int       `json:"user_id,omitempty"`
+	UserId    int       `json:"user_id,omitempty"`
 	Secret    string    `json:"secret,omitempty"`
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
@@ -74,21 +75,42 @@ func RandStringBytes(n int) string {
 	return string(b)
 }
 
-func CreateLogin(db *sql.DB, id string) error {
+func CreateLogin(db *sql.DB, userId int) (Login, error) {
 
 	secret := RandStringBytes(32)
 	_, err := db.Exec(`INSERT INTO logins(user_id,secret,created_at,updated_at)
 									VALUES($1,$2,$3,$4)`,
-		id,
+		userId,
 		secret,
 		time.Now().Format(time.RFC3339),
 		time.Now().Format(time.RFC3339))
 
-	if err != nil {
-		return err
+	// createdAt := time.Now().Format(time.RFC3339)
+	// updatedAt := time.Now().Format(time.RFC3339)
+
+	// CreatedAt, err := time.Parse(time.RFC3339, createdAt)
+
+	// if err != nil {
+	// 	return User{}, err
+	// }
+
+	// UpdatedAt, err := time.Parse(time.RFC3339, updatedAt)
+
+	// if err != nil {
+	// 	return User{}, err
+	// }
+	login := Login{
+		UserId:    userId,
+		Secret:    secret,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
 	}
 
-	return nil
+	if err != nil {
+		return login, err
+	}
+
+	return login, nil
 }
 func PostUserSigninPageHandler(c *gin.Context, db *sql.DB) {
 
@@ -99,7 +121,8 @@ func PostUserSigninPageHandler(c *gin.Context, db *sql.DB) {
 		return
 	}
 
-	var Password, Id string
+	var Password string
+	var Id int
 	row := db.QueryRow(`SELECT password,id FROM users WHERE email=$1`, user.Email)
 	err = row.Scan(&Password, &Id)
 	if err != nil {
@@ -112,7 +135,7 @@ func PostUserSigninPageHandler(c *gin.Context, db *sql.DB) {
 		return
 	}
 
-	err = CreateLogin(db, Id)
+	login, err := CreateLogin(db, Id)
 	if err != nil {
 		fmt.Println(err)
 		c.AbortWithStatus(http.StatusInternalServerError)
@@ -121,13 +144,13 @@ func PostUserSigninPageHandler(c *gin.Context, db *sql.DB) {
 
 	// c.Redirect(http.StatusFound, "http://localhost:3000/")
 
-	c.Status(http.StatusCreated)
+	c.JSON(201, login)
 }
 
 func deleteUserlogin(c *gin.Context, db *sql.DB) error {
 
-	secret := c.GetHeader()
-
+	value := c.GetHeader("Authorization")
+	secret := strings.TrimPrefix(value, "Bearer ")
 	_, err := db.Exec(`DELETE FROM logins WHERE secret= $1`, secret)
 	if err != nil {
 		return err

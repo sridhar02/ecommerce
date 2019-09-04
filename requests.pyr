@@ -25,3 +25,5 @@ post('http://localhost:8000/user/sign_in',
 		'email': 'katta@example.com',
 		'password':'sdjkshfafaajd',
 	})
+
+delte('http://localhost:8000/DELETE/login',headers={"Authorization": "Bearer XVlBzgbaiCMRAjWwhTHctcuAxhxKQFDa"})
