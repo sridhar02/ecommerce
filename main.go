@@ -7,6 +7,7 @@ import (
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	"log"
+	"math/rand"
 	"net/http"
 	"time"
 )
@@ -19,6 +20,12 @@ type User struct {
 	Password    string    `json:"password,omiempty"`
 	CreatedAt   time.Time `json:"created_at,omitempty"`
 	UpdatedAt   time.Time `json:"updated_at,omitempty"`
+}
+type Login struct {
+	userId    int       `json:"user_id,omitempty"`
+	Secret    string    `json:"secret,omitempty"`
+	CreatedAt time.Time `json:"created_at,omitempty"`
+	UpdatedAt time.Time `json:"updated_at,omitempty"`
 }
 
 func CreateUser(db *sql.DB, user User) error {
@@ -56,6 +63,33 @@ func postUserHandler(c *gin.Context, db *sql.DB) {
 	c.Status(http.StatusCreated)
 }
 
+const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+func RandStringBytes(n int) string {
+	b := make([]byte, n)
+	var i int
+	for i = range b {
+		b[i] = letterBytes[rand.Intn(len(letterBytes))]
+	}
+	return string(b)
+}
+
+func CreateLogin(db *sql.DB, id string) error {
+
+	secret := RandStringBytes(32)
+	_, err := db.Exec(`INSERT INTO logins(user_id,secret,created_at,updated_at)
+									VALUES($1,$2,$3,$4)`,
+		id,
+		secret,
+		time.Now().Format(time.RFC3339),
+		time.Now().Format(time.RFC3339))
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
 func PostUserSigninPageHandler(c *gin.Context, db *sql.DB) {
 
 	user := User{}
@@ -77,9 +111,29 @@ func PostUserSigninPageHandler(c *gin.Context, db *sql.DB) {
 		c.Status(http.StatusUnauthorized)
 		return
 	}
+
+	err = CreateLogin(db, Id)
+	if err != nil {
+		fmt.Println(err)
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+
 	// c.Redirect(http.StatusFound, "http://localhost:3000/")
 
 	c.Status(http.StatusCreated)
+}
+
+func deleteUserlogin(c *gin.Context, db *sql.DB) error {
+
+	secret := c.GetHeader()
+
+	_, err := db.Exec(`DELETE FROM logins WHERE secret= $1`, secret)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func main() {
@@ -107,6 +161,7 @@ func main() {
 
 	router.POST("/user/signup", func(c *gin.Context) { postUserHandler(c, db) })
 	router.POST("/user/sign_in", func(c *gin.Context) { PostUserSigninPageHandler(c, db) })
+	router.DELETE("DELETE/login", func(c *gin.Context) { deleteUserlogin(c, db) })
 
 	http.ListenAndServe(":8000", nil)
 	http.ListenAndServe(":8000/signin", nil)
