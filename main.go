@@ -159,6 +159,10 @@ func deleteUserlogin(c *gin.Context, db *sql.DB) error {
 	return nil
 }
 
+func getProductsHandler(c *gin.Context, db *sql.DB) {
+
+}
+
 func main() {
 	err := godotenv.Load()
 	if err != nil {
@@ -184,7 +188,8 @@ func main() {
 
 	router.POST("/user/signup", func(c *gin.Context) { postUserHandler(c, db) })
 	router.POST("/user/sign_in", func(c *gin.Context) { PostUserSigninPageHandler(c, db) })
-	router.DELETE("DELETE/login", func(c *gin.Context) { deleteUserlogin(c, db) })
+	router.DELETE("/login", func(c *gin.Context) { deleteUserlogin(c, db) })
+	router.GET("/products", func(c *gin.Context) { getProductsHandler(c, db) })
 
 	http.ListenAndServe(":8000", nil)
 	http.ListenAndServe(":8000/signin", nil)

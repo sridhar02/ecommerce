@@ -26,4 +26,4 @@ post('http://localhost:8000/user/sign_in',
 		'password':'sdjkshfafaajd',
 	})
 
-delte('http://localhost:8000/DELETE/login',headers={"Authorization": "Bearer XVlBzgbaiCMRAjWwhTHctcuAxhxKQFDa"})
+delete('http://localhost:8000/login',headers={"Authorization": "Bearer FpLSjFbcXoEFfRsWxPLDnJObCsNVlgTe"})
