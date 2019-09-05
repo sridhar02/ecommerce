@@ -27,3 +27,5 @@ post('http://localhost:8000/user/sign_in',
 	})
 
 delete('http://localhost:8000/login',headers={"Authorization": "Bearer FpLSjFbcXoEFfRsWxPLDnJObCsNVlgTe"})
+
+get('http://localhost:8000/products',)

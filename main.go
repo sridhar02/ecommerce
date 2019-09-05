@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
@@ -159,7 +160,40 @@ func deleteUserlogin(c *gin.Context, db *sql.DB) error {
 	return nil
 }
 
+type Product struct {
+	Id    int    `json:"id,omitempty"`
+	Name  string `json:"name,omitempty"`
+	Image string `json:"image,omitempty"`
+}
+
 func getProductsHandler(c *gin.Context, db *sql.DB) {
+
+	rows, err := db.Query(`SELECT * FROM products`)
+	if err != nil {
+		fmt.Println(err)
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+
+	var name, image string
+	var id int
+	products := []Product{}
+	for rows.Next() {
+		err = rows.Scan(&id, &name, &image)
+		if err != nil {
+			fmt.Println(err)
+			c.AbortWithStatus(http.StatusInternalServerError)
+			return
+		}
+		product := Product{
+			Id:    id,
+			Name:  name,
+			Image: image,
+		}
+		products = append(products, product)
+	}
+
+	c.JSON(http.StatusOK, products)
 
 }
 
@@ -184,6 +218,18 @@ func main() {
 	}
 
 	router := gin.Default()
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"http://localhost:3000"},
+		AllowMethods:     []string{"PUT", "GET", "DELETE", "POST", "PATCH"},
+		AllowHeaders:     []string{"Origin"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		AllowOriginFunc: func(origin string) bool {
+			return origin == "https://github.com"
+		},
+		MaxAge: 12 * time.Hour,
+	}))
+
 	http.Handle("/", router)
 
 	router.POST("/user/signup", func(c *gin.Context) { postUserHandler(c, db) })
