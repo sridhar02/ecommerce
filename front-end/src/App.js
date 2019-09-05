@@ -1,4 +1,11 @@
 import React, { Component } from "react";
+import {
+  BrowserRouter as Router,
+  Route,
+  Link,
+  Switch,
+  Redirect
+} from "react-router-dom";
 import logo from "./logo.svg";
 import "./App.css";
 
@@ -25,13 +32,9 @@ class Login extends Component {
           />
           <button className="login-button">Login</button>
           <div className="space">
-            <a
-              className="create-account"
-              href="#"
-              onClick={this.props.showSignup}
-            >
+            <Link className="create-account" to="/sign_up">
               New to Flipkart? Create an account
-            </a>
+            </Link>
           </div>
         </div>
       </div>
@@ -64,9 +67,9 @@ class Signup extends Component {
           />
           <button className="signup-button">Continue</button>
           <div className="space1">
-            <a class="create-account" href="#" onClick={this.props.showLogin}>
+            <Link className="create-account" to="/login">
               Existing account/login
-            </a>
+            </Link>
           </div>
         </div>
       </div>
@@ -91,11 +94,14 @@ class Products extends Component {
       });
   }
   render() {
-    const products = this.state.products.map(product => <li>{product}</li>);
     return (
       <div>
         <ul>
-          <li>{products.name}</li>
+          {this.state.products.map(product => (
+            <li key={product.name} className="order">
+              {product.name}
+            </li>
+          ))}
         </ul>
       </div>
     );
@@ -105,33 +111,20 @@ class Products extends Component {
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      screen: "Login"
-    };
   }
-
-  showLogin = () => {
-    this.setState({
-      screen: "Login"
-    });
-  };
-
-  showSignup = () => {
-    this.setState({
-      screen: "Signup"
-    });
-  };
 
   render() {
     return (
-      <div>
-        {/*{this.state.screen === "Login" ? (
-          <Login showSignup={this.showSignup} />
-        ) : (
-          <Signup showLogin={this.showLogin} />
-        )}*/}
-        <Products />
-      </div>
+      <Router>
+        <div>
+          <Switch>
+            <Route path="/login" component={Login} />
+            <Route path="/sign_up" component={Signup} />
+            <Route path="/products" render={() => <Products dark={true} />} />
+            <Route render={() => <Redirect to="/login" />} />
+          </Switch>
+        </div>
+      </Router>
     );
   }
 }
