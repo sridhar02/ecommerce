@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import logo from "./logo.png";
 import {
   BrowserRouter as Router,
   Route,
@@ -6,7 +7,7 @@ import {
   Switch,
   Redirect
 } from "react-router-dom";
-import logo from "./logo.svg";
+// import logo from "./logo.svg";
 import "./App.css";
 
 class Login extends Component {
@@ -208,13 +209,29 @@ class Products extends Component {
   render() {
     return (
       <div>
-        <ul>
-          {this.state.products.map(product => (
-            <li key={product.name} className="order">
-              {product.name}
-            </li>
-          ))}
-        </ul>
+        <nav className="nav-bar">
+          <span className="flipkart">Flipkart</span>
+          <input className="search-input" placeholder="Search products" />
+          <button className="button">
+            <Link>USER</Link>
+          </button>
+          <button className="button">CART</button>
+          <button className="button">sign-out</button>
+        </nav>
+        <div className="products-section">
+          <span>
+            {this.state.products.map(product => (
+              <span className="product-images">
+                <span>
+                  <img className="image" src={product.image} />
+                </span>
+                <span key={product.name} className="order">
+                  {product.name}
+                </span>
+              </span>
+            ))}
+          </span>
+        </div>
       </div>
     );
   }
