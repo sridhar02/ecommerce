@@ -48,7 +48,7 @@ func CreateUser(db *sql.DB, user User) error {
 	return nil
 }
 
-func postUserHandler(c *gin.Context, db *sql.DB) {
+func postUserSignupHandler(c *gin.Context, db *sql.DB) {
 
 	user := User{}
 	err := c.BindJSON(&user)
@@ -113,7 +113,7 @@ func CreateLogin(db *sql.DB, userId int) (Login, error) {
 
 	return login, nil
 }
-func PostUserSigninPageHandler(c *gin.Context, db *sql.DB) {
+func PostUserSigninHandler(c *gin.Context, db *sql.DB) {
 
 	user := User{}
 	err := c.BindJSON(&user)
@@ -148,7 +148,7 @@ func PostUserSigninPageHandler(c *gin.Context, db *sql.DB) {
 	c.JSON(201, login)
 }
 
-func deleteUserlogin(c *gin.Context, db *sql.DB) error {
+func deleteLoginHandler(c *gin.Context, db *sql.DB) error {
 
 	value := c.GetHeader("Authorization")
 	secret := strings.TrimPrefix(value, "Bearer ")
@@ -219,22 +219,19 @@ func main() {
 
 	router := gin.Default()
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:3000"},
+		AllowOrigins:     []string{"*"},
 		AllowMethods:     []string{"PUT", "GET", "DELETE", "POST", "PATCH"},
-		AllowHeaders:     []string{"Origin"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept"},
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
-		AllowOriginFunc: func(origin string) bool {
-			return origin == "https://github.com"
-		},
-		MaxAge: 12 * time.Hour,
+		MaxAge:           12 * time.Hour,
 	}))
 
 	http.Handle("/", router)
 
-	router.POST("/user/signup", func(c *gin.Context) { postUserHandler(c, db) })
-	router.POST("/user/sign_in", func(c *gin.Context) { PostUserSigninPageHandler(c, db) })
-	router.DELETE("/login", func(c *gin.Context) { deleteUserlogin(c, db) })
+	router.POST("/user/signup", func(c *gin.Context) { postUserSignupHandler(c, db) })
+	router.POST("/user/sign_in", func(c *gin.Context) { PostUserSigninHandler(c, db) })
+	router.DELETE("/login", func(c *gin.Context) { deleteLoginHandler(c, db) })
 	router.GET("/products", func(c *gin.Context) { getProductsHandler(c, db) })
 
 	http.ListenAndServe(":8000", nil)
