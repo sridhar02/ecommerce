@@ -159,3 +159,25 @@ input::placeholder {
   margin-left: 10px;
   max-width: 120px;
 }
+.user-information {
+  max-width: 900px;
+  margin: 0 auto;
+}
+.user-sidebar {
+  max-width: 300px;
+  /*margin: 0 auto;*/
+}
+
+.user-section {
+  display: flex;
+  /*margin: 0 10px;*/
+}
+.gender {
+  display: flex;
+}
+.Mobilenumber-edit {
+  display: flex;
+}
+.email-edit {
+  display: flex;
+}

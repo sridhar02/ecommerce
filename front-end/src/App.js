@@ -1,5 +1,5 @@
-import React, { Component } from "react";
-import logo from "./logo.png";
+import React, { Component, Fragment } from "react";
+// import logo from "./logo.png";
 import {
   BrowserRouter as Router,
   Route,
@@ -9,6 +9,9 @@ import {
 } from "react-router-dom";
 // import logo from "./logo.svg";
 import "./App.css";
+
+import { Products } from "./ProductsPage";
+import { User } from "./UserPage";
 
 class Login extends Component {
   constructor(props) {
@@ -190,53 +193,6 @@ class Signup extends Component {
   }
 }
 
-class Products extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      products: []
-    };
-  }
-  componentDidMount() {
-    fetch("http://localhost:8000/products")
-      .then(res => res.json())
-      .then(products => {
-        this.setState({
-          products: products
-        });
-      });
-  }
-  render() {
-    return (
-      <div>
-        <nav className="nav-bar">
-          <span className="flipkart">Flipkart</span>
-          <input className="search-input" placeholder="Search products" />
-          <button className="button">
-            <Link>USER</Link>
-          </button>
-          <button className="button">CART</button>
-          <button className="button">sign-out</button>
-        </nav>
-        <div className="products-section">
-          <span>
-            {this.state.products.map(product => (
-              <span className="product-images">
-                <span>
-                  <img className="image" src={product.image} />
-                </span>
-                <span key={product.name} className="order">
-                  {product.name}
-                </span>
-              </span>
-            ))}
-          </span>
-        </div>
-      </div>
-    );
-  }
-}
-
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -250,6 +206,7 @@ class App extends React.Component {
             <Route path="/login" component={Login} />
             <Route path="/sign_up" component={Signup} />
             <Route path="/products" render={() => <Products dark={true} />} />
+            <Route path="/account" component={User} />
             <Route render={() => <Redirect to="/login" />} />
           </Switch>
         </div>
