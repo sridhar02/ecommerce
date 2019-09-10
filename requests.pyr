@@ -29,3 +29,15 @@ post('http://localhost:8000/user/sign_in',
 delete('http://localhost:8000/login',headers={"Authorization": "Bearer FpLSjFbcXoEFfRsWxPLDnJObCsNVlgTe"})
 
 get('http://localhost:8000/products',)
+
+
+put('http://localhost:8000/user',
+	headers={
+	"Authorization": "Bearer FpLSjFbcXoEFfRsWxPLDnJObCsNVlgTe"
+	},
+	json={
+		'name':'max',
+		'sex': 'Male',
+		'email':'funkey@gmail.com',
+		'phonenumber':'9493758127',
+	})

@@ -19,7 +19,8 @@ const navbarStyles = {
   }
 };
 
-function _Navbar({ classes }) {
+function _Navbar(props) {
+  const { classes } = props;
   return (
     <nav className="nav-bar">
       <span className="flipkart">Flipkart</span>

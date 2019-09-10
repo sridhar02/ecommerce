@@ -22,6 +22,8 @@ type User struct {
 	Password    string    `json:"password,omiempty"`
 	CreatedAt   time.Time `json:"created_at,omitempty"`
 	UpdatedAt   time.Time `json:"updated_at,omitempty"`
+	Name        string    `json:"Name,omitempty"`
+	Sex         string    `json:"sex,omitempty`
 }
 type Login struct {
 	UserId    int       `json:"user_id,omitempty"`
@@ -197,6 +199,38 @@ func getProductsHandler(c *gin.Context, db *sql.DB) {
 
 }
 
+func userUpdateHandler(c *gin.Context, db *sql.DB) {
+
+	value := c.GetHeader("Authorization")
+	secret := strings.TrimPrefix(value, "Bearer ")
+
+	var userId int
+	row := db.QueryRow(`SELECT user_id FROM logins WHERE secret=$1`, secret)
+	err := row.Scan(&userId)
+	if err != nil {
+		fmt.Println(err)
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+
+	user := User{}
+	err = c.BindJSON(&user)
+	if err != nil {
+		fmt.Println(err)
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+
+	_, err = db.Exec(`UPDATE users SET name=$1,sex=$2,email=$3,phonenumber=$4 WHERE id= $5`,
+		user.Name, user.Sex, user.Email, user.Phonenumber, userId)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	c.Status(http.StatusNoContent)
+}
+
 func main() {
 	err := godotenv.Load()
 	if err != nil {
@@ -233,6 +267,7 @@ func main() {
 	router.POST("/user/sign_in", func(c *gin.Context) { PostUserSigninHandler(c, db) })
 	router.DELETE("/login", func(c *gin.Context) { deleteLoginHandler(c, db) })
 	router.GET("/products", func(c *gin.Context) { getProductsHandler(c, db) })
+	router.PUT("/user", func(c *gin.Context) { userUpdateHandler(c, db) })
 
 	http.ListenAndServe(":8000", nil)
 	http.ListenAndServe(":8000/signin", nil)
