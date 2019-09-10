@@ -21,6 +21,9 @@ const personalInformationStyles = theme => {
       display: "flex",
       flexDirection: "row"
     },
+    personalInformation: {
+      display: "flex"
+    },
     button: {
       margin: "10px"
     },
@@ -36,7 +39,8 @@ class _PersonalInformation extends Component {
     super(props);
     this.state = {
       name: "",
-      disable: false
+      sex: "",
+      disabled: true
     };
   }
 
@@ -52,51 +56,82 @@ class _PersonalInformation extends Component {
       method: "PUT",
       headers: {
         Accept: "applicaton/json",
-        "Content-type": "application/json"
+        "Content-type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("secret")}`
       },
       body: JSON.stringify({
-        name: this.state.name
+        name: this.state.name,
+        sex: this.state.sex
       })
     }).then(response => {
       if (response.status === 204) {
         this.setState({
-          disable: true
+          disabled: true
         });
       }
     });
   };
 
+  handleEdit = () => {
+    this.setState({
+      disabled: false
+    });
+  };
+  handleCancel = () => {
+    this.setState({
+      disabled: true
+    });
+  };
+
   render() {
     const { classes } = this.props;
-
-    return (
-      <Fragment>
-        <Typography variant="h5">
-          Personal information
-          <Button color="primary" className={classes.button}>
-            edit
+    const { disabled } = this.state;
+    let buttons;
+    if (disabled === true) {
+      buttons = (
+        <Button color="primary" onClick={this.handleEdit}>
+          edit
+        </Button>
+      );
+    } else {
+      buttons = (
+        <Fragment>
+          <Button color="primary" onClick={this.handleCancel}>
+            Cancel
           </Button>
-        </Typography>
+          <Button color="primary" type="submit">
+            Save
+          </Button>{" "}
+        </Fragment>
+      );
+    }
+    return (
+      <form onSubmit={this.handleSubmit}>
+        <div className={classes.personalInformation}>
+          <Typography variant="h5">Personal information</Typography>
+          {buttons}
+        </div>
         <div>
-          <form onSubmit={this.handleSubmit}>
-            <TextField
-              id="outlined-name"
-              label="Name"
-              name="name"
-              className={classes.textField}
-              placeholder="Enter Name"
-              value={this.state.name}
-              onChange={this.handleChange}
-              margin="normal"
-              variant="outlined"
-            />
-          </form>
+          <TextField
+            id="outlined-name"
+            label="Name"
+            name="name"
+            className={classes.textField}
+            placeholder="Enter Name"
+            value={this.state.name}
+            onChange={this.handleChange}
+            margin="normal"
+            disabled={disabled}
+            variant="outlined"
+          />
           <div className="gender">
             <FormControl component="fieldset" className={classes.formControl}>
               <FormLabel component="legend">Your Gender</FormLabel>
               <RadioGroup
                 aria-label="gender"
-                name="gender1"
+                name="sex"
+                value={this.state.sex}
+                onChange={this.handleChange}
                 className={classes.gender}
               >
                 <FormControlLabel
@@ -113,7 +148,7 @@ class _PersonalInformation extends Component {
             </FormControl>
           </div>
         </div>
-      </Fragment>
+      </form>
     );
   }
 }
@@ -125,23 +160,87 @@ const PersonalInformation = withStyles(personalInformationStyles)(
 const emailStyles = {};
 
 class _Email extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      email: "",
+      disabled: true
+    };
+  }
+
+  handleChange = event => {
+    this.setState({
+      [event.target.name]: event.target.value
+    });
+  };
+
+  handleSubmit = event => {
+    event.preventDefault();
+    fetch("http://localhost:8000/user", {
+      method: "PUT",
+      headers: {
+        Accept: "applicaton/json",
+        "Content-type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("secret")}`
+      },
+      body: JSON.stringify({
+        email: this.state.email
+      })
+    }).then(response => {
+      if (response.status === 204) {
+        this.setState({
+          disabled: true
+        });
+      }
+    });
+  };
+
+  handleEdit = () => {
+    this.setState({
+      disabled: false
+    });
+  };
+
   render() {
+    const { disabled } = this.state;
+    let buttons;
+    if (disabled === true) {
+      buttons = (
+        <Fragment>
+          <Button onClick={this.handleEdit} color="primary">
+            edit
+          </Button>
+          <Button color="primary">change password</Button>
+        </Fragment>
+      );
+    } else {
+      buttons = (
+        <Fragment>
+          <Button color="primary" type="submit">
+            Save
+          </Button>
+          <Button color="primary">change password</Button>
+        </Fragment>
+      );
+    }
     return (
-      <Fragment>
+      <form onSubmit={this.handleSubmit}>
         <div className="email-edit">
           <Typography variant="h5">Email Adresss</Typography>
-          <Button color="primary">edit</Button>
-          <Button color="primary">change password</Button>
+          {buttons}
         </div>
         <TextField
           id="outlined-name"
           label="Email"
-          // className={classes.textField}
+          name="email"
+          value={this.state.email}
+          onChange={this.handleChange}
+          disabled={disabled}
           placeholder=" Enter Email Adress"
           margin="normal"
           variant="outlined"
         />
-      </Fragment>
+      </form>
     );
   }
 }
@@ -149,22 +248,80 @@ class _Email extends Component {
 const Email = withStyles(emailStyles)(_Email);
 
 class Phonenumber extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      phonenumber: "",
+      disabled: true
+    };
+  }
+
+  handleChange = event => {
+    this.setState({
+      [event.target.name]: event.target.value
+    });
+  };
+
+  handleSubmit = event => {
+    event.preventDefault();
+    fetch("http://localhost:8000/user", {
+      method: "PUT",
+      headers: {
+        Accept: "applicaton/json",
+        "Content-type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("secret")}`
+      },
+      body: JSON.stringify({
+        phonenumber: this.state.phonenumber
+      })
+    }).then(response => {
+      if (response.status === 204) {
+        this.setState({
+          disabled: true
+        });
+      }
+    });
+  };
+
+  handleEdit = () => {
+    this.setState({
+      disabled: false
+    });
+  };
+
   render() {
+    const { disabled } = this.state;
+    let buttons;
+    if (disabled === true) {
+      buttons = (
+        <Button color="primary" onClick={this.handleEdit}>
+          edit
+        </Button>
+      );
+    } else {
+      buttons = (
+        <Button color="primary" type="submit">
+          Save
+        </Button>
+      );
+    }
     return (
-      <Fragment>
+      <form onSubmit={this.handleSubmit}>
         <div className="Mobilenumber-edit">
           <Typography variant="h5">Mobile Number</Typography>
-          <Button color="primary">edit</Button>
+          {buttons}
         </div>
         <TextField
           id="outlined-name"
           label="Phonenumber"
-          // className={classes.textField}
+          value={this.state.email}
+          onChange={this.handleChange}
+          disabled={disabled}
           placeholder=" Enter Phonenumber"
           margin="normal"
           variant="outlined"
         />
-      </Fragment>
+      </form>
     );
   }
 }

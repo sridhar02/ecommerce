@@ -41,13 +41,20 @@ class Login extends Component {
         email: this.state.email,
         password: this.state.password
       })
-    }).then(response => {
-      if (response.status === 201) {
-        this.setState({
-          signin: true
-        });
-      }
-    });
+    })
+      .then(response => {
+        if (response.status === 201) {
+          this.setState({
+            signin: true
+          });
+          return response.json();
+        }
+      })
+      .then(data => {
+        if (data) {
+          localStorage.setItem("secret", data.secret);
+        }
+      });
   };
   render() {
     if (this.state.signin) {

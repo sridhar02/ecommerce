@@ -21,6 +21,11 @@ const navbarStyles = {
 
 function _Navbar(props) {
   const { classes } = props;
+
+  const onSignout = () => {
+    localStorage.removeItem("secret");
+  };
+
   return (
     <nav className="nav-bar">
       <span className="flipkart">Flipkart</span>
@@ -29,7 +34,9 @@ function _Navbar(props) {
         USER
       </Button>
       <Button className={classes.button}>CART</Button>
-      <Button className={classes.button}>sign-out</Button>
+      <Button className={classes.button} onClick={onSignout}>
+        sign-out
+      </Button>
     </nav>
   );
 }

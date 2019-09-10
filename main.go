@@ -204,6 +204,11 @@ func userUpdateHandler(c *gin.Context, db *sql.DB) {
 	value := c.GetHeader("Authorization")
 	secret := strings.TrimPrefix(value, "Bearer ")
 
+	if secret == "" {
+		c.Status(http.StatusUnauthorized)
+		return
+	}
+
 	var userId int
 	row := db.QueryRow(`SELECT user_id FROM logins WHERE secret=$1`, secret)
 	err := row.Scan(&userId)
@@ -255,7 +260,7 @@ func main() {
 	router.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"*"},
 		AllowMethods:     []string{"PUT", "GET", "DELETE", "POST", "PATCH"},
-		AllowHeaders:     []string{"Origin", "Content-Type", "Accept"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
 		MaxAge:           12 * time.Hour,
