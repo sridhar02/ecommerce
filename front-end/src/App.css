@@ -150,8 +150,11 @@ input::placeholder {
 }
 
 .product-images {
+  margin-left: 10px;
+  margin-bottom: 15px;
   display: inline-grid;
-  /*grid-template-rows: 80% 100px auto;*/
+  grid-template-columns: 200px;
+  /*grid-column-gap: 85px;*/
 }
 .order {
   display: flex;
@@ -175,9 +178,6 @@ input::placeholder {
 .gender {
   display: flex;
 }
-.Mobilenumber-edit {
-  display: flex;
-}
-.email-edit {
-  display: flex;
+.product-section {
+  margin: 20px 0px 20px 20px;
 }

@@ -3,15 +3,17 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	"github.com/gin-contrib/cors"
-	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
-	_ "github.com/lib/pq"
 	"log"
 	"math/rand"
 	"net/http"
 	"strings"
 	"time"
+
+	sq "github.com/Masterminds/squirrel"
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
+	_ "github.com/lib/pq"
 )
 
 type User struct {
@@ -31,6 +33,8 @@ type Login struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
 }
+
+var psql = sq.StatementBuilder.PlaceholderFormat(sq.Dollar)
 
 func CreateUser(db *sql.DB, user User) error {
 
@@ -226,10 +230,28 @@ func userUpdateHandler(c *gin.Context, db *sql.DB) {
 		return
 	}
 
-	_, err = db.Exec(`UPDATE users SET name=$1,sex=$2,email=$3,phonenumber=$4 WHERE id= $5`,
-		user.Name, user.Sex, user.Email, user.Phonenumber, userId)
+	query := psql.Update("users")
+	if user.Name != "" {
+		query = query.Set("name", user.Name)
+	}
+	if user.Sex != "" {
+		query = query.Set("sex", user.Sex)
+	}
+	if user.Email != "" {
+		query = query.Set("email", user.Email)
+	}
+	fmt.Println(user.Phonenumber)
+	if user.Phonenumber != "" {
+		query = query.Set("phonenumber", user.Phonenumber)
+	}
+	query = query.Where(sq.Eq{"id": userId})
+
+	q, args, err := query.ToSql()
+
+	_, err = db.Exec(q, args...)
 	if err != nil {
 		fmt.Println(err)
+		// ??????????????????????????????????????????????????
 		return
 	}
 

@@ -22,14 +22,14 @@ export class Products extends Component {
     return (
       <Fragment>
         <Navbar />
-        <div className="products-section">
+        <div className="product-section">
           {this.state.products.map(product => (
-            <span key={product.id} className="product-images">
+            <div key={product.id} className="product-images">
               <span>
                 <img className="image" src={product.image} />
               </span>
               <span className="order">{product.name}</span>
-            </span>
+            </div>
           ))}
         </div>
       </Fragment>

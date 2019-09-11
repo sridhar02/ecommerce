@@ -13,26 +13,32 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FormControl from "@material-ui/core/FormControl";
 import FormLabel from "@material-ui/core/FormLabel";
 
-const personalInformationStyles = theme => {
-  console.log(theme);
-
-  return {
-    gender: {
-      display: "flex",
-      flexDirection: "row"
-    },
-    personalInformation: {
-      display: "flex"
-    },
-    button: {
-      margin: "10px"
-    },
-    textField: {
-      marginLeft: theme.spacing(1),
-      marginRight: theme.spacing(1)
-    }
-  };
-};
+const personalInformationStyles = theme => ({
+  alignment: {
+    display: "flex",
+    paddingBottom: theme.spacing(1)
+  },
+  gender: {
+    display: "flex",
+    flexDirection: "row",
+    marginTop: theme.spacing(2)
+  },
+  personalInformation: {
+    display: "flex",
+    marginBottom: theme.spacing(3),
+    marginTop: theme.spacing(2)
+  },
+  spacing: {
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(7)
+  },
+  buttonMargin: {
+    marginLeft: theme.spacing(2)
+  },
+  rightMargin: {
+    marginRight: theme.spacing(4)
+  }
+});
 
 class _PersonalInformation extends Component {
   constructor(props) {
@@ -87,6 +93,7 @@ class _PersonalInformation extends Component {
     const { classes } = this.props;
     const { disabled } = this.state;
     let buttons;
+    let saveButton;
     if (disabled === true) {
       buttons = (
         <Button color="primary" onClick={this.handleEdit}>
@@ -98,33 +105,40 @@ class _PersonalInformation extends Component {
         <Fragment>
           <Button color="primary" onClick={this.handleCancel}>
             Cancel
-          </Button>
-          <Button color="primary" type="submit">
-            Save
           </Button>{" "}
         </Fragment>
+      );
+      saveButton = (
+        <Button
+          variant="contained"
+          className={classes.buttonMargin}
+          color="primary"
+          type="submit"
+        >
+          Save
+        </Button>
       );
     }
     return (
       <form onSubmit={this.handleSubmit}>
         <div className={classes.personalInformation}>
-          <Typography variant="h5">Personal information</Typography>
+          <Typography variant="h7">Personal information</Typography>
           {buttons}
         </div>
         <div>
-          <TextField
-            id="outlined-name"
-            label="Name"
-            name="name"
-            className={classes.textField}
-            placeholder="Enter Name"
-            value={this.state.name}
-            onChange={this.handleChange}
-            margin="normal"
-            disabled={disabled}
-            variant="outlined"
-          />
-          <div className="gender">
+          <div className={classes.alignment}>
+            <TextField
+              name="name"
+              label="Name"
+              placeholder="Enter Name"
+              value={this.state.name}
+              onChange={this.handleChange}
+              disabled={disabled}
+              variant="outlined"
+            />
+            {saveButton}
+          </div>
+          <div className={classes.gender} className={classes.spacing}>
             <FormControl component="fieldset" className={classes.formControl}>
               <FormLabel component="legend">Your Gender</FormLabel>
               <RadioGroup
@@ -137,6 +151,7 @@ class _PersonalInformation extends Component {
                 <FormControlLabel
                   value="Female"
                   control={<Radio />}
+                  className={classes.rightMargin}
                   label="Female"
                 />
                 <FormControlLabel
@@ -157,7 +172,19 @@ const PersonalInformation = withStyles(personalInformationStyles)(
   _PersonalInformation
 );
 
-const emailStyles = {};
+const emailStyles = theme => ({
+  buttonMargin: {
+    marginLeft: theme.spacing(2)
+  },
+  align: {
+    display: "flex",
+    marginBottom: theme.spacing(6)
+  },
+  emailEdit: {
+    display: "flex",
+    marginBottom: theme.spacing(3)
+  }
+});
 
 class _Email extends Component {
   constructor(props) {
@@ -201,9 +228,18 @@ class _Email extends Component {
     });
   };
 
+  handleCancel = () => {
+    this.setState({
+      disabled: true
+    });
+  };
+
   render() {
+    const { classes } = this.props;
     const { disabled } = this.state;
+    console.log(disabled);
     let buttons;
+    let saveButton;
     if (disabled === true) {
       buttons = (
         <Fragment>
@@ -216,30 +252,41 @@ class _Email extends Component {
     } else {
       buttons = (
         <Fragment>
-          <Button color="primary" type="submit">
-            Save
+          <Button color="primary" onClick={this.handleCancel}>
+            Cancel
           </Button>
           <Button color="primary">change password</Button>
         </Fragment>
       );
+      saveButton = (
+        <Button
+          variant="contained"
+          className={classes.buttonMargin}
+          color="primary"
+          type="submit"
+        >
+          Save
+        </Button>
+      );
     }
     return (
       <form onSubmit={this.handleSubmit}>
-        <div className="email-edit">
-          <Typography variant="h5">Email Adresss</Typography>
+        <div className={classes.emailEdit}>
+          <Typography variant="h7">Email Adresss</Typography>
           {buttons}
         </div>
-        <TextField
-          id="outlined-name"
-          label="Email"
-          name="email"
-          value={this.state.email}
-          onChange={this.handleChange}
-          disabled={disabled}
-          placeholder=" Enter Email Adress"
-          margin="normal"
-          variant="outlined"
-        />
+        <div className={classes.align}>
+          <TextField
+            label="Email"
+            name="email"
+            value={this.state.email}
+            onChange={this.handleChange}
+            disabled={disabled}
+            placeholder=" Enter Email Adress"
+            variant="outlined"
+          />
+          {saveButton}
+        </div>
       </form>
     );
   }
@@ -247,7 +294,22 @@ class _Email extends Component {
 
 const Email = withStyles(emailStyles)(_Email);
 
-class Phonenumber extends Component {
+const phoneNumberStyles = theme => ({
+  buttonMargin: {
+    marginLeft: theme.spacing(2)
+  },
+  align: {
+    display: "flex",
+    marginBottom: theme.spacing(6)
+  },
+  mobileNumberEdit: {
+    display: "flex",
+    marginTop: theme.spacing(1.5),
+    marginBottom: theme.spacing(2)
+  }
+});
+
+class _Phonenumber extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -289,9 +351,16 @@ class Phonenumber extends Component {
     });
   };
 
+  handleCancel = () => {
+    this.setState({
+      disabled: true
+    });
+  };
   render() {
+    const { classes } = this.props;
     const { disabled } = this.state;
     let buttons;
+    let saveButton;
     if (disabled === true) {
       buttons = (
         <Button color="primary" onClick={this.handleEdit}>
@@ -300,36 +369,51 @@ class Phonenumber extends Component {
       );
     } else {
       buttons = (
-        <Button color="primary" type="submit">
+        <Button color="primary" onClick={this.handleCancel}>
+          Cancel
+        </Button>
+      );
+      saveButton = (
+        <Button
+          variant="contained"
+          className={classes.buttonMargin}
+          color="primary"
+          type="submit"
+        >
           Save
         </Button>
       );
     }
     return (
       <form onSubmit={this.handleSubmit}>
-        <div className="Mobilenumber-edit">
-          <Typography variant="h5">Mobile Number</Typography>
+        <div className={classes.mobileNumberEdit}>
+          <Typography variant="h7">Mobile Number</Typography>
           {buttons}
         </div>
-        <TextField
-          id="outlined-name"
-          label="Phonenumber"
-          value={this.state.email}
-          onChange={this.handleChange}
-          disabled={disabled}
-          placeholder=" Enter Phonenumber"
-          margin="normal"
-          variant="outlined"
-        />
+        <div className={classes.align}>
+          <TextField
+            name="phonenumber"
+            value={this.state.phonenumber}
+            onChange={this.handleChange}
+            disabled={disabled}
+            label="Phonenumber"
+            variant="outlined"
+            placeholder=" Enter Phonenumber"
+          />
+          {saveButton}
+        </div>
       </form>
     );
   }
 }
 
+const Phonenumber = withStyles(phoneNumberStyles)(_Phonenumber);
+
 function FAQS() {
   return (
     <Fragment>
       <Typography variant="h5">FAQs</Typography>
+      <br />
       <Typography>
         What happens when I update my email address (or mobile number)? Your
         login email id (or mobile number) changes, likewise. You'll receive all
