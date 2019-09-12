@@ -6,12 +6,9 @@ import { Button } from "@material-ui/core";
 
 import { withStyles } from "@material-ui/styles";
 
-import {
-  BrowserRouter as Router,
-  Route,
-  Switch,
-  Redirect
-} from "react-router-dom";
+import { Redirect } from "react-router-dom";
+
+// import { Cart } from "./cartPage";
 
 const navbarStyles = {
   navbar: {},
@@ -52,7 +49,9 @@ class _Navbar extends Component {
         <Button className={classes.button} component={Link} to="/account">
           USER
         </Button>
-        <Button className={classes.button}>CART</Button>
+        <Button className={classes.button} component={Link} to="/viewcart">
+          CART
+        </Button>
         <Button className={classes.button} onClick={this.onSignout}>
           signout
         </Button>

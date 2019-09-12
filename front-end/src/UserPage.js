@@ -8,7 +8,6 @@ import { Button, TextField, Typography } from "@material-ui/core";
 
 import Radio from "@material-ui/core/Radio";
 import RadioGroup from "@material-ui/core/RadioGroup";
-import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FormControl from "@material-ui/core/FormControl";
 import FormLabel from "@material-ui/core/FormLabel";
@@ -444,10 +443,6 @@ function FAQS() {
 }
 
 export class User extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     return (
       <Fragment>
