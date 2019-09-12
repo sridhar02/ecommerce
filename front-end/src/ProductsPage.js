@@ -3,18 +3,69 @@ import React, { Component, Fragment } from "react";
 import { Navbar } from "./utils";
 import { withStyles } from "@material-ui/core/styles";
 
-import { Button, TextField, Typography } from "@material-ui/core";
-
-import Radio from "@material-ui/core/Radio";
-import RadioGroup from "@material-ui/core/RadioGroup";
-import FormHelperText from "@material-ui/core/FormHelperText";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import FormControl from "@material-ui/core/FormControl";
-import FormLabel from "@material-ui/core/FormLabel";
+import { Button, Typography } from "@material-ui/core";
 
 const productStyles = theme => ({
-  productName: {
-    height: theme.spacing(4.5)
+  name: {
+    height: theme.spacing(4.5),
+    display: "flex",
+    marginLeft: "10px",
+    maxWidth: "120px"
+  },
+  product: {
+    // marginLeft: "10px",
+    marginBottom: "15px"
+  },
+  image: {
+    margin: "10px",
+    height: "100px",
+    width: "120px"
+  }
+});
+
+class _Product extends Component {
+  handleCart = event => {
+    event.preventDefault();
+    fetch("http://localhost:8000/viewcart", {
+      method: "POST",
+      headers: {
+        Accept: "applicaton/json",
+        "Content-type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("secret")}`
+      },
+      body: JSON.stringify({})
+    }).then(response => {
+      if (response.status === 201) {
+      }
+    });
+  };
+
+  render() {
+    const { classes, product } = this.props;
+    return (
+      <div className={classes.product}>
+        <div>
+          <img className={classes.image} src={product.image} />
+        </div>
+        <Typography variant="h7" className={classes.name}>
+          {product.name}
+        </Typography>
+        <Button variant="contained" color="primary" onClick={this.handleCart}>
+          Add to Cart
+        </Button>
+      </div>
+    );
+  }
+}
+
+const Product = withStyles(productStyles)(_Product);
+
+const productsStyles = theme => ({
+  productsSection: {
+    margin: "20px 0px 20px 20px",
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr 1fr",
+    gridTemplateRows: " 1fr "
   }
 });
 
@@ -34,24 +85,15 @@ class _Products extends Component {
         });
       });
   }
+
   render() {
     const { classes } = this.props;
     return (
       <Fragment>
         <Navbar />
-        <div className="product-section">
+        <div className={classes.productsSection}>
           {this.state.products.map(product => (
-            <div key={product.id} className="product-images">
-              <span>
-                <img className="image" src={product.image} />
-              </span>
-              <span className="order" className={classes.productName}>
-                {product.name}
-              </span>
-              <Button variant="contained" color="primary">
-                Add to Cart
-              </Button>
-            </div>
+            <Product product={product} key={product.id} />
           ))}
         </div>
       </Fragment>
@@ -59,4 +101,4 @@ class _Products extends Component {
   }
 }
 
-export const Products = withStyles(productStyles)(_Products);
+export const Products = withStyles(productsStyles)(_Products);
