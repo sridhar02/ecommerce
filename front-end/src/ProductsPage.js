@@ -64,8 +64,8 @@ const productsStyles = theme => ({
   productsSection: {
     margin: "20px 0px 20px 20px",
     display: "grid",
-    gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr 1fr",
-    gridTemplateRows: " 1fr "
+    gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+    gridTemplateRows: " 1fr auto"
   }
 });
 
