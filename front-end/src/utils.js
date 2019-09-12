@@ -53,7 +53,7 @@ class _Navbar extends Component {
           CART
         </Button>
         <Button className={classes.button} onClick={this.onSignout}>
-          signout
+          SIGNOUT
         </Button>
       </nav>
     );
