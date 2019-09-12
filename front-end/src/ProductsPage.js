@@ -13,7 +13,6 @@ const productStyles = theme => ({
     maxWidth: "120px"
   },
   product: {
-    // marginLeft: "10px",
     marginBottom: "15px"
   },
   image: {
@@ -26,7 +25,7 @@ const productStyles = theme => ({
 class _Product extends Component {
   handleCart = event => {
     event.preventDefault();
-    fetch("http://localhost:8000/viewcart", {
+    fetch("http://localhost:8000/cart", {
       method: "POST",
       headers: {
         Accept: "applicaton/json",
@@ -61,11 +60,10 @@ class _Product extends Component {
 const Product = withStyles(productStyles)(_Product);
 
 const productsStyles = theme => ({
-  productsSection: {
-    margin: "20px 0px 20px 20px",
+  section: {
+    margin: "20px",
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-    gridTemplateRows: " 1fr auto"
+    gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))"
   }
 });
 
@@ -91,7 +89,7 @@ class _Products extends Component {
     return (
       <Fragment>
         <Navbar />
-        <div className={classes.productsSection}>
+        <div className={classes.section}>
           {this.state.products.map(product => (
             <Product product={product} key={product.id} />
           ))}
