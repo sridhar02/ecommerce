@@ -9,14 +9,14 @@ import { Typography } from "@material-ui/core";
 const cartStyles = theme => ({});
 
 class _Cart extends Component {
-	render() {
-		return (
-			<Fragment>
-				<Navbar />
-				<Typography>My Cart</Typography>
-			</Fragment>
-		);
-	}
+  render() {
+    return (
+      <Fragment>
+        <Navbar />
+        <Typography>My Cart</Typography>
+      </Fragment>
+    );
+  }
 }
 
 export const Cart = withStyles(cartStyles)(_Cart);

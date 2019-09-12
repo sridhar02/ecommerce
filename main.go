@@ -299,7 +299,7 @@ func main() {
 	router.DELETE("/login", func(c *gin.Context) { deleteLoginHandler(c, db) })
 	router.GET("/products", func(c *gin.Context) { getProductsHandler(c, db) })
 	router.PUT("/user", func(c *gin.Context) { userUpdateHandler(c, db) })
-	router.POST("/viewcart", func(c *gin.Context) { postToCartHandler(c, db) })
+	router.POST("/cart", func(c *gin.Context) { postToCartHandler(c, db) })
 
 	http.ListenAndServe(":8000", nil)
 	http.ListenAndServe(":8000/signin", nil)
