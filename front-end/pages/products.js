@@ -1,6 +1,8 @@
 import React, { Component, Fragment } from "react";
 
-import { Navbar } from "./utils";
+import fetch from "isomorphic-unfetch";
+
+import { Navbar } from "../src/utils";
 import { withStyles } from "@material-ui/core/styles";
 
 import { Button, Typography } from "@material-ui/core";
@@ -46,7 +48,7 @@ class _Product extends Component {
         <div>
           <img className={classes.image} src={product.image} />
         </div>
-        <Typography variant="h7" className={classes.name}>
+        <Typography variant="body2" className={classes.name}>
           {product.name}
         </Typography>
         <Button variant="contained" color="primary" onClick={this.handleCart}>
@@ -68,12 +70,19 @@ const productsStyles = theme => ({
 });
 
 class _Products extends Component {
+  static getInitialProps = async () => {
+    const res = await fetch("http://localhost:8000/products");
+    const products = await res.json();
+    return { products };
+  };
+
   constructor(props) {
     super(props);
     this.state = {
-      products: []
+      products: props.products || []
     };
   }
+
   componentDidMount() {
     fetch("http://localhost:8000/products")
       .then(res => res.json())
@@ -99,4 +108,6 @@ class _Products extends Component {
   }
 }
 
-export const Products = withStyles(productsStyles)(_Products);
+const Products = withStyles(productsStyles)(_Products);
+
+export default Products;

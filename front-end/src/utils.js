@@ -1,57 +1,70 @@
 import React, { Component } from "react";
 
-import { Link } from "react-router-dom";
+import Link from "next/link";
 
-import { Button } from "@material-ui/core";
+import { Button, TextField, Typography } from "@material-ui/core";
 
 import { withStyles } from "@material-ui/styles";
 
 import { Redirect } from "react-router-dom";
 
-// import { Cart } from "./cartPage";
+import Router from "next/router";
 
 const navbarStyles = {
-  navbar: {},
-  flipkart: {},
+  navbar: {
+    display: "flex",
+    justifyContent: "space-around",
+    marginBottom: "10px",
+    backgroundColor: "blue"
+  },
+  flipkart: {
+    margin: "0 10px",
+    padding: "10px",
+    fontWeight: "bold",
+    textAlign: "center",
+    fontSize: "20px"
+  },
   button: {
     padding: "10px",
     margin: "0 10px",
-    border: 0,
-    color: "white",
     fontWeight: "bold",
     fontSize: "18px",
+    color: "white",
     backgroundColor: "blue"
+  },
+  searchInput: {
+    backgroundColor: "white",
+    width: "50%"
   }
 };
 
 class _Navbar extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      signOut: false
-    };
   }
   onSignout = () => {
     localStorage.removeItem("secret");
-    this.setState({
-      signOut: true
-    });
+    Router.push("/login");
   };
   render() {
     const { classes } = this.props;
-    if (this.state.signOut) {
-      return <Redirect to="/login" />;
-    }
     return (
-      <nav className="nav-bar">
-        <span className="flipkart">Flipkart</span>
-        <input className="search-input" placeholder="Search products" />
-        <Button className={classes.button} component={Link} to="/account">
-          USER
-        </Button>
-        <Button className={classes.button} component={Link} to="/viewcart">
-          CART
-        </Button>
+      <nav className={classes.navbar}>
+        <Typography className={classes.flipkart}>Flipkart</Typography>
+        <TextField
+          id="outlined-bare"
+          margin="normal"
+          variant="outlined"
+          inputProps={{ "aria-label": "bare" }}
+          className={classes.searchInput}
+          placeholder="Search products"
+        />
+        <Link href="/account">
+          <Button className={classes.button}>USER</Button>
+        </Link>
+        <Link href="/viewcart">
+          <Button className={classes.button}>CART</Button>
+        </Link>
         <Button className={classes.button} onClick={this.onSignout}>
           SIGNOUT
         </Button>
