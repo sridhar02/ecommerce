@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from "react";
 
-import { Navbar } from "./utils";
+import { Navbar } from "../src/utils";
 
 import { withStyles } from "@material-ui/core/styles";
 
@@ -121,7 +121,7 @@ class _PersonalInformation extends Component {
     return (
       <form onSubmit={this.handleSubmit}>
         <div className={classes.personalInformation}>
-          <Typography variant="h7">Personal information</Typography>
+          <Typography variant="h6">Personal information</Typography>
           {buttons}
         </div>
         <div>
@@ -236,7 +236,7 @@ class _Email extends Component {
   render() {
     const { classes } = this.props;
     const { disabled } = this.state;
-    console.log(disabled);
+
     let buttons;
     let saveButton;
     if (disabled === true) {
@@ -271,7 +271,7 @@ class _Email extends Component {
     return (
       <form onSubmit={this.handleSubmit}>
         <div className={classes.emailEdit}>
-          <Typography variant="h7">Email Adresss</Typography>
+          <Typography variant="h6">Email Adresss</Typography>
           {buttons}
         </div>
         <div className={classes.align}>
@@ -386,7 +386,7 @@ class _Phonenumber extends Component {
     return (
       <form onSubmit={this.handleSubmit}>
         <div className={classes.mobileNumberEdit}>
-          <Typography variant="h7">Mobile Number</Typography>
+          <Typography variant="h6">Mobile Number</Typography>
           {buttons}
         </div>
         <div className={classes.align}>
@@ -442,16 +442,34 @@ function FAQS() {
   );
 }
 
-export class User extends Component {
+const userStyles = theme => ({
+  userInformation: {
+    maxWidth: "900px",
+    margin: "0 auto"
+  },
+  userSidebar: {
+    maxWidth: "300px"
+  },
+
+  userSection: {
+    display: "flex"
+  }
+});
+
+class _User extends Component {
+  constructor(props) {
+    super(props);
+  }
   render() {
+    const { classes } = this.props;
     return (
       <Fragment>
         <Navbar />
-        <div className="user-section">
-          <div className="user-sidebar">
-            <button>My orders</button>
+        <div className={classes.userSection}>
+          <div className={classes.userSidebar}>
+            <Button>My orders</Button>
           </div>
-          <div className="user-information">
+          <div className={classes.userInformation}>
             <PersonalInformation />
             <Email />
             <Phonenumber />
@@ -462,3 +480,6 @@ export class User extends Component {
     );
   }
 }
+const User = withStyles(userStyles)(_User);
+
+export default User;

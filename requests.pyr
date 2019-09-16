@@ -41,3 +41,11 @@ put('http://localhost:8000/user',
 		'email':'funkey@gmail.com',
 		'phonenumber':'9493758127',
 	})
+
+ post('http://localhost:8000/cart',
+ 		headers={
+	    "Authorization": "Bearer MaPEZQleQYhYzRyWJjPjzpfRFEgmotaF"
+	    },
+ 	    json={
+               'product_id':11,            
+ 	    })

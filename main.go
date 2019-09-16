@@ -92,20 +92,6 @@ func CreateLogin(db *sql.DB, userId int) (Login, error) {
 		time.Now().Format(time.RFC3339),
 		time.Now().Format(time.RFC3339))
 
-	// createdAt := time.Now().Format(time.RFC3339)
-	// updatedAt := time.Now().Format(time.RFC3339)
-
-	// CreatedAt, err := time.Parse(time.RFC3339, createdAt)
-
-	// if err != nil {
-	// 	return User{}, err
-	// }
-
-	// UpdatedAt, err := time.Parse(time.RFC3339, updatedAt)
-
-	// if err != nil {
-	// 	return User{}, err
-	// }
 	login := Login{
 		UserId:    userId,
 		Secret:    secret,
@@ -258,11 +244,40 @@ func userUpdateHandler(c *gin.Context, db *sql.DB) {
 	c.Status(http.StatusNoContent)
 }
 
+type Cart struct {
+	ProductId int `json:"product_id,omitempty"`
+	UserId    int `json:"user_id,omitempty"`
+}
+
 func postToCartHandler(c *gin.Context, db *sql.DB) {
 
 	value := c.GetHeader("Authorization")
 	secret := strings.TrimPrefix(value, "Bearer ")
 
+	var userId int
+	row := db.QueryRow(`SELECT user_id FROM logins WHERE secret=$1`, secret)
+	err := row.Scan(&userId)
+	if err != nil {
+		fmt.Println(err)
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+
+	cart := Cart{}
+	err = c.BindJSON(&cart)
+	if err != nil {
+		fmt.Println(err)
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+
+	_, err = db.Exec(`INSERT INTO cart(product_id,user_id)VALUES($1,$2)`, cart.ProductId, userId)
+	if err != nil {
+		fmt.Println(err)
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+	c.Status(http.StatusCreated)
 }
 
 func main() {
