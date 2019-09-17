@@ -50,8 +50,13 @@ put('http://localhost:8000/user',
                'product_id':14,            
  	    })
 
-
 get('http://localhost:8000/cart',
 	 headers={
 	    "Authorization": "Bearer MaPEZQleQYhYzRyWJjPjzpfRFEgmotaF"
 	})
+
+
+ post('http://localhost:8000/orders',
+ 	  headers={
+	    "Authorization": "Bearer MaPEZQleQYhYzRyWJjPjzpfRFEgmotaF"
+	    })
