@@ -60,3 +60,5 @@ get('http://localhost:8000/cart',
  	  headers={
 	    "Authorization": "Bearer MaPEZQleQYhYzRyWJjPjzpfRFEgmotaF"
 	    })
+
+get('http://localhost:8000')
