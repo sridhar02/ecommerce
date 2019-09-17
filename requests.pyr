@@ -51,7 +51,6 @@ put('http://localhost:8000/user',
  	    })
 
 
-
 get('http://localhost:8000/cart_view',
 	 headers={
 	    "Authorization": "Bearer MaPEZQleQYhYzRyWJjPjzpfRFEgmotaF"
