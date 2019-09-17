@@ -250,7 +250,6 @@ type Cart struct {
 }
 
 func postToCartHandler(c *gin.Context, db *sql.DB) {
-
 	value := c.GetHeader("Authorization")
 	secret := strings.TrimPrefix(value, "Bearer ")
 
@@ -278,6 +277,69 @@ func postToCartHandler(c *gin.Context, db *sql.DB) {
 		return
 	}
 	c.Status(http.StatusCreated)
+}
+
+func getCartHandler(c *gin.Context, db *sql.DB) {
+
+	value := c.GetHeader("Authorization")
+	secret := strings.TrimPrefix(value, "Bearer ")
+
+	var userId int
+	row := db.QueryRow(`SELECT user_id FROM logins WHERE secret=$1`, secret)
+	err := row.Scan(&userId)
+	if err != nil {
+		fmt.Println(err)
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+
+	rows, err := db.Query(`SELECT product_id FROM cart where user_id =  $1`, userId)
+	if err != nil {
+		fmt.Println(err)
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+
+	var productId int
+	productIds := []int{}
+	for rows.Next() {
+		err = rows.Scan(&productId)
+		if err != nil {
+			fmt.Println(err)
+			c.AbortWithStatus(http.StatusInternalServerError)
+			return
+		}
+		productIds = append(productIds, productId)
+	}
+
+	products := []Product{}
+	for _, productId := range productIds {
+
+		rows, err = db.Query(`SELECT image,name FROM products where id =  $1`, productId)
+		if err != nil {
+			fmt.Println(err)
+			c.AbortWithStatus(http.StatusInternalServerError)
+			return
+		}
+
+		var name, image string
+		for rows.Next() {
+			err = rows.Scan(&name, &image)
+			if err != nil {
+				fmt.Println(err)
+				c.AbortWithStatus(http.StatusInternalServerError)
+				return
+			}
+			product := Product{
+				Name:  name,
+				Image: image,
+			}
+			products = append(products, product)
+		}
+	}
+
+	c.JSON(http.StatusOK, products)
+
 }
 
 func main() {
@@ -318,6 +380,7 @@ func main() {
 	router.GET("/products", func(c *gin.Context) { getProductsHandler(c, db) })
 	router.PUT("/user", func(c *gin.Context) { userUpdateHandler(c, db) })
 	router.POST("/cart", func(c *gin.Context) { postToCartHandler(c, db) })
+	router.GET("/cart_view", func(c *gin.Context) { getCartHandler(c, db) })
 
 	http.ListenAndServe(":8000", nil)
 	http.ListenAndServe(":8000/signin", nil)
