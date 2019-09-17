@@ -47,5 +47,12 @@ put('http://localhost:8000/user',
 	    "Authorization": "Bearer MaPEZQleQYhYzRyWJjPjzpfRFEgmotaF"
 	    },
  	    json={
-               'product_id':11,            
+               'product_id':14,            
  	    })
+
+
+
+get('http://localhost:8000/cart_view',
+	 headers={
+	    "Authorization": "Bearer MaPEZQleQYhYzRyWJjPjzpfRFEgmotaF"
+	})
