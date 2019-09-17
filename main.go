@@ -279,7 +279,7 @@ func postToCartHandler(c *gin.Context, db *sql.DB) {
 	c.Status(http.StatusCreated)
 }
 
-func Authorization(c *gin.Context, db *sql.DB) (int, error) {
+func authorization(c *gin.Context, db *sql.DB) (int, error) {
 
 	value := c.GetHeader("Authorization")
 	secret := strings.TrimPrefix(value, "Bearer ")
@@ -288,9 +288,14 @@ func Authorization(c *gin.Context, db *sql.DB) (int, error) {
 	row := db.QueryRow(`SELECT user_id FROM logins WHERE secret=$1`, secret)
 	err := row.Scan(&userId)
 	if err != nil {
-		fmt.Println(err)
-		c.AbortWithStatus(http.StatusInternalServerError)
-		return 0, err
+		if err == sql.ErrNoRows {
+			fmt.Println(err)
+			c.AbortWithStatus(http.StatusUnauthorized)
+			return 0, err
+		} else {
+			c.AbortWithStatus(http.StatusInternalServerError)
+			return 0, err
+		}
 	}
 
 	return userId, nil
@@ -299,10 +304,8 @@ func Authorization(c *gin.Context, db *sql.DB) (int, error) {
 
 func getCartHandler(c *gin.Context, db *sql.DB) {
 
-	userId, err := Authorization(c, db)
+	userId, err := authorization(c, db)
 	if err != nil {
-		fmt.Println(err)
-		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 
