@@ -267,6 +267,10 @@ func authorization(c *gin.Context, db *sql.DB) (int, error) {
 
 }
 
+func getOrdersHandler(c *gin.Context, db *sql.DB) {
+
+}
+
 func main() {
 	err := godotenv.Load()
 	if err != nil {
@@ -307,6 +311,7 @@ func main() {
 	router.POST("/cart", func(c *gin.Context) { postToCartHandler(c, db) })
 	router.GET("/cart", func(c *gin.Context) { getCartHandler(c, db) })
 	router.POST("/orders", func(c *gin.Context) { postOrderHandler(c, db) })
+	router.GET("/orders", func(c *gin.Context) { getOrdersHandler(c, db) })
 
 	http.ListenAndServe(":8000", nil)
 	http.ListenAndServe(":8000/signin", nil)
