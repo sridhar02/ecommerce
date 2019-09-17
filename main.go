@@ -279,7 +279,7 @@ func postToCartHandler(c *gin.Context, db *sql.DB) {
 	c.Status(http.StatusCreated)
 }
 
-func getCartHandler(c *gin.Context, db *sql.DB) {
+func Authorization(c *gin.Context, db *sql.DB) (int, error) {
 
 	value := c.GetHeader("Authorization")
 	secret := strings.TrimPrefix(value, "Bearer ")
@@ -290,52 +290,46 @@ func getCartHandler(c *gin.Context, db *sql.DB) {
 	if err != nil {
 		fmt.Println(err)
 		c.AbortWithStatus(http.StatusInternalServerError)
-		return
+		return 0, err
 	}
 
-	rows, err := db.Query(`SELECT product_id FROM cart where user_id =  $1`, userId)
+	return userId, nil
+
+}
+
+func getCartHandler(c *gin.Context, db *sql.DB) {
+
+	userId, err := Authorization(c, db)
 	if err != nil {
 		fmt.Println(err)
 		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 
-	var productId int
-	productIds := []int{}
-	for rows.Next() {
-		err = rows.Scan(&productId)
-		if err != nil {
-			fmt.Println(err)
-			c.AbortWithStatus(http.StatusInternalServerError)
-			return
-		}
-		productIds = append(productIds, productId)
+	rows, err := db.Query(`SELECT products.id,products.name,products.image FROM products JOIN 
+	                         cart ON cart.product_id = products.id 	where  cart.user_id =  $1`, userId)
+	if err != nil {
+		fmt.Println(err)
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
 	}
 
 	products := []Product{}
-	for _, productId := range productIds {
-
-		rows, err = db.Query(`SELECT image,name FROM products where id =  $1`, productId)
+	for rows.Next() {
+		var id int
+		var image, name string
+		err = rows.Scan(&id, &name, &image)
 		if err != nil {
 			fmt.Println(err)
 			c.AbortWithStatus(http.StatusInternalServerError)
 			return
 		}
-
-		var name, image string
-		for rows.Next() {
-			err = rows.Scan(&name, &image)
-			if err != nil {
-				fmt.Println(err)
-				c.AbortWithStatus(http.StatusInternalServerError)
-				return
-			}
-			product := Product{
-				Name:  name,
-				Image: image,
-			}
-			products = append(products, product)
+		product := Product{
+			Id:    id,
+			Name:  name,
+			Image: image,
 		}
+		products = append(products, product)
 	}
 
 	c.JSON(http.StatusOK, products)
