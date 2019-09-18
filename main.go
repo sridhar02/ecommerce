@@ -305,8 +305,8 @@ func main() {
 	router.GET("/products", func(c *gin.Context) { getProductsHandler(c, db) })
 	router.PUT("/user", func(c *gin.Context) { userUpdateHandler(c, db) })
 	router.POST("/cart", func(c *gin.Context) { postToCartHandler(c, db) })
-	router.POST("/orders", func(c *gin.Context) { postOrderHandler(c, db) })
 	router.GET("/cart", func(c *gin.Context) { getCartHandler(c, db) })
+	router.POST("/orders", func(c *gin.Context) { postOrderHandler(c, db) })
 
 	http.ListenAndServe(":8000", nil)
 	http.ListenAndServe(":8000/signin", nil)

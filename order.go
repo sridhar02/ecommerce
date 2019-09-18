@@ -14,7 +14,8 @@ func postOrderHandler(c *gin.Context, db *sql.DB) {
 		return
 	}
 
-	_, err = db.Exec(`INSERT INTO orders(user_id)VALUES($1)`, userId)
+	var orderId int
+	err = db.QueryRow(`INSERT INTO orders (user_id) VALUES($1) RETURNING id`, userId).Scan(&orderId)
 	if err != nil {
 		fmt.Println(err)
 		c.AbortWithStatus(http.StatusInternalServerError)
@@ -38,15 +39,6 @@ func postOrderHandler(c *gin.Context, db *sql.DB) {
 			return
 		}
 		productIds = append(productIds, productId)
-	}
-
-	var orderId int
-	row := db.QueryRow(`SELECT id FROM orders WHERE user_id=$1`, userId)
-	err = row.Scan(&orderId)
-	if err != nil {
-		fmt.Println(err)
-		c.AbortWithStatus(http.StatusInternalServerError)
-		return
 	}
 
 	for _, productId := range productIds {
