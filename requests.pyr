@@ -61,4 +61,7 @@ get('http://localhost:8000/cart',
 	    "Authorization": "Bearer MaPEZQleQYhYzRyWJjPjzpfRFEgmotaF"
 	    })
 
-get('http://localhost:8000')
+get('http://localhost:8000/orders',
+	headers={
+	    "Authorization": "Bearer MaPEZQleQYhYzRyWJjPjzpfRFEgmotaF"
+	    })
