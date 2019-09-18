@@ -3,14 +3,8 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	// "log"
-	// "math/rand"
-	"net/http"
-	"strings"
-	// "time"
-
-	// sq "github.com/Masterminds/squirrel"
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
 type Cart struct {
@@ -20,15 +14,8 @@ type Cart struct {
 
 func postToCartHandler(c *gin.Context, db *sql.DB) {
 
-	value := c.GetHeader("Authorization")
-	secret := strings.TrimPrefix(value, "Bearer ")
-
-	var userId int
-	row := db.QueryRow(`SELECT user_id FROM logins WHERE secret=$1`, secret)
-	err := row.Scan(&userId)
+	userId, err := authorization(c, db)
 	if err != nil {
-		fmt.Println(err)
-		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 
@@ -49,66 +36,39 @@ func postToCartHandler(c *gin.Context, db *sql.DB) {
 	c.Status(http.StatusCreated)
 }
 
-func postOrderHandler(c *gin.Context, db *sql.DB) {
+func getCartHandler(c *gin.Context, db *sql.DB) {
 
-	value := c.GetHeader("Authorization")
-	secret := strings.TrimPrefix(value, "Bearer ")
+	userId, err := authorization(c, db)
+	if err != nil {
+		return
+	}
 
-	var userId int
-	row := db.QueryRow(`SELECT user_id FROM logins WHERE secret=$1`, secret)
-	err := row.Scan(&userId)
+	rows, err := db.Query(`SELECT products.id,products.name,products.image FROM products JOIN 
+	                         cart ON cart.product_id = products.id 	where  cart.user_id =  $1`, userId)
 	if err != nil {
 		fmt.Println(err)
 		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 
-	_, err = db.Exec(`INSERT INTO orders(user_id)VALUES($1)`, userId)
-	if err != nil {
-		fmt.Println(err)
-		c.AbortWithStatus(http.StatusInternalServerError)
-		return
-	}
-
-	rows, err := db.Query(`SELECT product_id FROM cart WHERE user_id = $1`, userId)
-	if err != nil {
-		fmt.Println(err)
-		c.AbortWithStatus(http.StatusInternalServerError)
-		return
-	}
-
-	var productId int
-	productIds := []int{}
+	products := []Product{}
 	for rows.Next() {
-		err = rows.Scan(&productId)
+		var id int
+		var image, name string
+		err = rows.Scan(&id, &name, &image)
 		if err != nil {
 			fmt.Println(err)
 			c.AbortWithStatus(http.StatusInternalServerError)
 			return
 		}
-		productIds = append(productIds, productId)
-	}
-
-	var orderId int
-	row = db.QueryRow(`SELECT id FROM orders WHERE user_id=$1`, userId)
-	err = row.Scan(&orderId)
-	if err != nil {
-		fmt.Println(err)
-		c.AbortWithStatus(http.StatusInternalServerError)
-		return
-	}
-
-	for _, productId := range productIds {
-
-		_, err = db.Exec(`INSERT INTO order_products(order_id,product_id)VALUES($1,$2)`,
-			orderId, productId)
-		if err != nil {
-			fmt.Println(err)
-			c.AbortWithStatus(http.StatusInternalServerError)
-			return
+		product := Product{
+			Id:    id,
+			Name:  name,
+			Image: image,
 		}
+		products = append(products, product)
 	}
 
-	c.Status(http.StatusCreated)
+	c.JSON(http.StatusOK, products)
 
 }
