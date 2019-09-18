@@ -65,7 +65,7 @@ func postOrderHandler(c *gin.Context, db *sql.DB) {
 type OrderResponse struct {
 	OrderId   int       `json:"order_id,omitempty"`
 	CreatedAt time.Time `json:"created_at,omitempty"`
-	Products  []Product `json:"products,omitempty"`
+	Products  []Product `json:"products"`
 }
 
 func getOrdersHandler(c *gin.Context, db *sql.DB) {
