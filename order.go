@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"time"
 )
 
 func postOrderHandler(c *gin.Context, db *sql.DB) {
@@ -15,7 +16,8 @@ func postOrderHandler(c *gin.Context, db *sql.DB) {
 	}
 
 	var orderId int
-	err = db.QueryRow(`INSERT INTO orders (user_id) VALUES($1) RETURNING id`, userId).Scan(&orderId)
+	err = db.QueryRow(`INSERT INTO orders (user_id,created_at) VALUES($1,$2) RETURNING id`,
+		userId, time.Now().Format(time.RFC3339)).Scan(&orderId)
 	if err != nil {
 		fmt.Println(err)
 		c.AbortWithStatus(http.StatusInternalServerError)
@@ -60,6 +62,12 @@ func postOrderHandler(c *gin.Context, db *sql.DB) {
 	c.Status(http.StatusCreated)
 }
 
+type OrderResponse struct {
+	OrderId   int       `json:"order_id,omitempty"`
+	CreatedAt time.Time `json:"created_at,omitempty"`
+	Products  []Product `json:"products,omitempty"`
+}
+
 func getOrdersHandler(c *gin.Context, db *sql.DB) {
 
 	userId, err := authorization(c, db)
@@ -67,7 +75,7 @@ func getOrdersHandler(c *gin.Context, db *sql.DB) {
 		return
 	}
 
-	rows, err := db.Query(`SELECT id FROM orders WHERE user_id=$1`, userId)
+	rows, err := db.Query(`SELECT id,created_at FROM orders WHERE user_id=$1`, userId)
 	if err != nil {
 		fmt.Println(err)
 		c.AbortWithStatus(http.StatusInternalServerError)
@@ -75,9 +83,10 @@ func getOrdersHandler(c *gin.Context, db *sql.DB) {
 	}
 
 	var orderId int
+	var createdAt string
 	orderIds := []int{}
 	for rows.Next() {
-		err = rows.Scan(&orderId)
+		err = rows.Scan(&orderId, &createdAt)
 		if err != nil {
 			fmt.Println(err)
 			c.AbortWithStatus(http.StatusInternalServerError)
@@ -86,7 +95,13 @@ func getOrdersHandler(c *gin.Context, db *sql.DB) {
 		orderIds = append(orderIds, orderId)
 	}
 
-	orderProducts := map[int][]Product{}
+	CreatedAt, err := time.Parse(time.RFC3339, createdAt)
+
+	if err != nil {
+		return
+	}
+
+	orderResponses := []OrderResponse{}
 
 	for _, orderId := range orderIds {
 		rows, err := db.Query(`SELECT products.name,products.image FROM order_products JOIN 
@@ -112,8 +127,13 @@ func getOrdersHandler(c *gin.Context, db *sql.DB) {
 			}
 			products = append(products, product)
 		}
-		orderProducts[orderId] = products
+		orderResponse := OrderResponse{
+			OrderId:   orderId,
+			CreatedAt: CreatedAt,
+			Products:  products,
+		}
+		orderResponses = append(orderResponses, orderResponse)
 	}
 
-	c.JSON(http.StatusOK, orderProducts)
+	c.JSON(http.StatusOK, orderResponses)
 }
