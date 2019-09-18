@@ -83,8 +83,8 @@ func getOrdersHandler(c *gin.Context, db *sql.DB) {
 	}
 
 	var orderId int
-	var createdAt string
-	orderIds := []int{}
+	var createdAt time.Time
+	orderResponses := []OrderResponse{}
 	for rows.Next() {
 		err = rows.Scan(&orderId, &createdAt)
 		if err != nil {
@@ -92,20 +92,17 @@ func getOrdersHandler(c *gin.Context, db *sql.DB) {
 			c.AbortWithStatus(http.StatusInternalServerError)
 			return
 		}
-		orderIds = append(orderIds, orderId)
+		orderResponse := OrderResponse{
+			OrderId:   orderId,
+			CreatedAt: createdAt,
+		}
+		orderResponses = append(orderResponses, orderResponse)
 	}
 
-	CreatedAt, err := time.Parse(time.RFC3339, createdAt)
-
-	if err != nil {
-		return
-	}
-
-	orderResponses := []OrderResponse{}
-
-	for _, orderId := range orderIds {
+	for i, orderResponse := range orderResponses {
 		rows, err := db.Query(`SELECT products.name,products.image FROM order_products JOIN 
-								products ON order_products.product_id= products.id WHERE order_id =$1`, orderId)
+							   products ON order_products.product_id= products.id WHERE order_id =$1`,
+			orderResponse.OrderId)
 		if err != nil {
 			fmt.Println(err)
 			c.AbortWithStatus(http.StatusInternalServerError)
@@ -127,12 +124,7 @@ func getOrdersHandler(c *gin.Context, db *sql.DB) {
 			}
 			products = append(products, product)
 		}
-		orderResponse := OrderResponse{
-			OrderId:   orderId,
-			CreatedAt: CreatedAt,
-			Products:  products,
-		}
-		orderResponses = append(orderResponses, orderResponse)
+		orderResponses[i].Products = products
 	}
 
 	c.JSON(http.StatusOK, orderResponses)
