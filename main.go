@@ -244,41 +244,6 @@ func userUpdateHandler(c *gin.Context, db *sql.DB) {
 	c.Status(http.StatusNoContent)
 }
 
-type Cart struct {
-	ProductId int `json:"product_id,omitempty"`
-	UserId    int `json:"user_id,omitempty"`
-}
-
-func postToCartHandler(c *gin.Context, db *sql.DB) {
-	value := c.GetHeader("Authorization")
-	secret := strings.TrimPrefix(value, "Bearer ")
-
-	var userId int
-	row := db.QueryRow(`SELECT user_id FROM logins WHERE secret=$1`, secret)
-	err := row.Scan(&userId)
-	if err != nil {
-		fmt.Println(err)
-		c.AbortWithStatus(http.StatusInternalServerError)
-		return
-	}
-
-	cart := Cart{}
-	err = c.BindJSON(&cart)
-	if err != nil {
-		fmt.Println(err)
-		c.AbortWithStatus(http.StatusInternalServerError)
-		return
-	}
-
-	_, err = db.Exec(`INSERT INTO cart(product_id,user_id)VALUES($1,$2)`, cart.ProductId, userId)
-	if err != nil {
-		fmt.Println(err)
-		c.AbortWithStatus(http.StatusInternalServerError)
-		return
-	}
-	c.Status(http.StatusCreated)
-}
-
 func authorization(c *gin.Context, db *sql.DB) (int, error) {
 
 	value := c.GetHeader("Authorization")
@@ -299,43 +264,6 @@ func authorization(c *gin.Context, db *sql.DB) (int, error) {
 	}
 
 	return userId, nil
-
-}
-
-func getCartHandler(c *gin.Context, db *sql.DB) {
-
-	userId, err := authorization(c, db)
-	if err != nil {
-		return
-	}
-
-	rows, err := db.Query(`SELECT products.id,products.name,products.image FROM products JOIN 
-	                         cart ON cart.product_id = products.id 	where  cart.user_id =  $1`, userId)
-	if err != nil {
-		fmt.Println(err)
-		c.AbortWithStatus(http.StatusInternalServerError)
-		return
-	}
-
-	products := []Product{}
-	for rows.Next() {
-		var id int
-		var image, name string
-		err = rows.Scan(&id, &name, &image)
-		if err != nil {
-			fmt.Println(err)
-			c.AbortWithStatus(http.StatusInternalServerError)
-			return
-		}
-		product := Product{
-			Id:    id,
-			Name:  name,
-			Image: image,
-		}
-		products = append(products, product)
-	}
-
-	c.JSON(http.StatusOK, products)
 
 }
 
