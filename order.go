@@ -52,7 +52,7 @@ func postOrderHandler(c *gin.Context, db *sql.DB) {
 		}
 	}
 
-	_, err := db.Exec(`DELETE FROM cart  WHERE user_id= $1`, userId)
+	_, err = db.Exec(`DELETE FROM cart  WHERE user_id= $1`, userId)
 	if err != nil {
 		return
 	}
