@@ -77,14 +77,6 @@ const cartStyles = theme => ({
     lineHeight: "56px",
     padding: "0 24px",
     fontWeight: "500"
-  },
-  image: {
-    textAlign: "center",
-    padding: "30px 0 36px",
-    background: "#fff"
-  },
-  link: {
-    textDecoration: "none"
   }
 });
 
@@ -112,6 +104,22 @@ class _Cart extends Component {
         });
       });
   }
+
+  handleOrder = event => {
+    event.preventDefault();
+    fetch("http://localhost:8000/orders", {
+      method: "POST",
+      headers: {
+        Accept: "applicaton/json",
+        "Content-type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("secret")}`
+      }
+    }).then(response => {
+      if (response.status === 201) {
+        router.push("/orders");
+      }
+    });
+  };
 
   render() {
     const { classes, products } = this.props;

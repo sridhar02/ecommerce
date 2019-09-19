@@ -4,8 +4,15 @@ import App from "next/app";
 import { ThemeProvider } from "@material-ui/styles";
 
 import { createMuiTheme } from "@material-ui/core/styles";
+import blue from "@material-ui/core/colors/blue";
 
-export const theme = createMuiTheme();
+export const theme = createMuiTheme({
+  palette: {
+    primary: {
+      main: "#00F"
+    }
+  }
+});
 
 class MyApp extends App {
   // Only uncomment this method if you have blocking data requirements for
