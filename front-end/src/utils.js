@@ -29,8 +29,8 @@ const navbarStyles = {
     margin: "0 10px",
     fontWeight: "bold",
     fontSize: "18px",
-    color: "white",
-    backgroundColor: "blue"
+    color: "white"
+    // backgroundColor: "blue"
   },
   searchInput: {
     backgroundColor: "white",
@@ -64,6 +64,9 @@ class _Navbar extends Component {
         </Link>
         <Link href="/viewcart">
           <Button className={classes.button}>CART</Button>
+        </Link>
+        <Link href="/orders">
+          <Button className={classes.button}>ORDERS</Button>
         </Link>
         <Button className={classes.button} onClick={this.onSignout}>
           SIGNOUT
