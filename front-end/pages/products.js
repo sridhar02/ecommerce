@@ -26,6 +26,7 @@ const productStyles = theme => ({
 
 class _Product extends Component {
   handleCart = event => {
+    const { product } = this.props;
     event.preventDefault();
     fetch("http://localhost:8000/cart", {
       method: "POST",
@@ -34,7 +35,9 @@ class _Product extends Component {
         "Content-type": "application/json",
         Authorization: `Bearer ${localStorage.getItem("secret")}`
       },
-      body: JSON.stringify({})
+      body: JSON.stringify({
+        product_id: product.id
+      })
     }).then(response => {
       if (response.status === 201) {
       }
