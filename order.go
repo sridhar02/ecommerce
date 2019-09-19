@@ -14,7 +14,6 @@ func postOrderHandler(c *gin.Context, db *sql.DB) {
 	if err != nil {
 		return
 	}
-
 	var orderId int
 	err = db.QueryRow(`INSERT INTO orders (user_id,created_at) VALUES($1,$2) RETURNING id`,
 		userId, time.Now().Format(time.RFC3339)).Scan(&orderId)
@@ -33,6 +32,7 @@ func postOrderHandler(c *gin.Context, db *sql.DB) {
 
 	var productId int
 	productIds := []int{}
+
 	for rows.Next() {
 		err = rows.Scan(&productId)
 		if err != nil {
@@ -53,9 +53,9 @@ func postOrderHandler(c *gin.Context, db *sql.DB) {
 			return
 		}
 	}
-
 	_, err = db.Exec(`DELETE FROM cart  WHERE user_id= $1`, userId)
 	if err != nil {
+		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 
@@ -63,7 +63,7 @@ func postOrderHandler(c *gin.Context, db *sql.DB) {
 }
 
 type OrderResponse struct {
-	OrderId   int       `json:"order_id,omitempty"`
+	ID        int       `json:"id,omitempty"`
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	Products  []Product `json:"products"`
 }
@@ -82,18 +82,18 @@ func getOrdersHandler(c *gin.Context, db *sql.DB) {
 		return
 	}
 
-	var orderId int
+	var Id int
 	var createdAt time.Time
 	orderResponses := []OrderResponse{}
 	for rows.Next() {
-		err = rows.Scan(&orderId, &createdAt)
+		err = rows.Scan(&Id, &createdAt)
 		if err != nil {
 			fmt.Println(err)
 			c.AbortWithStatus(http.StatusInternalServerError)
 			return
 		}
 		orderResponse := OrderResponse{
-			OrderId:   orderId,
+			ID:        Id,
 			CreatedAt: createdAt,
 		}
 		orderResponses = append(orderResponses, orderResponse)
@@ -102,7 +102,7 @@ func getOrdersHandler(c *gin.Context, db *sql.DB) {
 	for i, orderResponse := range orderResponses {
 		rows, err := db.Query(`SELECT products.name,products.image FROM order_products JOIN 
 							   products ON order_products.product_id= products.id WHERE order_id =$1`,
-			orderResponse.OrderId)
+			orderResponse.ID)
 		if err != nil {
 			fmt.Println(err)
 			c.AbortWithStatus(http.StatusInternalServerError)
