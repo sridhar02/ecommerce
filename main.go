@@ -268,6 +268,8 @@ func authorization(c *gin.Context, db *sql.DB) (int, error) {
 }
 
 func main() {
+	rand.Seed(time.Now().UTC().UnixNano())
+
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
