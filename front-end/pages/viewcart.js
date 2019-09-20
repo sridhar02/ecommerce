@@ -23,26 +23,24 @@ const emptyCartStyles = theme => ({
   }
 });
 
-class _EmptyCart extends Component {
-  render() {
-    const { classes } = this.props;
-    return (
-      <div>
-        <Navbar />
-        <Typography className={classes.mycart}>My Cart</Typography>
-        <div className={classes.image}>
-          <img src="/static/cart.png" />
-        </div>
-        <div className={classes.button}>
-          <Button variant="contained" color="primary">
-            <Link href="/products">
-              <a className={classes.link}>SHOP KNOW</a>
-            </Link>
-          </Button>
-        </div>
+function _EmptyCart(props) {
+  const { classes } = props;
+  return (
+    <div>
+      <Navbar />
+      <Typography className={classes.mycart}>My Cart</Typography>
+      <div className={classes.image}>
+        <img src="/static/cart.png" />
       </div>
-    );
-  }
+      <div className={classes.button}>
+        <Button variant="contained" color="primary">
+          <Link href="/products">
+            <a className={classes.link}>SHOP KNOW</a>
+          </Link>
+        </Button>
+      </div>
+    </div>
+  );
 }
 
 const EmptyCart = withStyles(emptyCartStyles)(_EmptyCart);
@@ -55,18 +53,15 @@ const productStyles = theme => ({
   }
 });
 
-class _Product extends Component {
-  render() {
-    const { classes, product } = this.props;
-    return (
+function _Product({ classes, product }) {
+  return (
+    <div>
+      <Typography variant="body2">{product.name}</Typography>
       <div>
-        <Typography variant="body2">{product.name}</Typography>
-        <div>
-          <img src={product.image} className={classes.image} />
-        </div>
+        <img src={product.image} className={classes.image} />
       </div>
-    );
-  }
+    </div>
+  );
 }
 
 const Product = withStyles(productStyles)(_Product);
