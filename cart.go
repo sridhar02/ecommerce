@@ -43,7 +43,7 @@ func getCartHandler(c *gin.Context, db *sql.DB) {
 		return
 	}
 
-	rows, err := db.Query(`SELECT products.id,products.name,products.image FROM products JOIN 
+	rows, err := db.Query(`SELECT products.id,products.name,products.image,products.price FROM products JOIN 
 	                         cart ON cart.product_id = products.id 	where  cart.user_id =  $1`, userId)
 	if err != nil {
 		fmt.Println(err)
@@ -53,9 +53,9 @@ func getCartHandler(c *gin.Context, db *sql.DB) {
 
 	products := []Product{}
 	for rows.Next() {
-		var id int
+		var id, price int
 		var image, name string
-		err = rows.Scan(&id, &name, &image)
+		err = rows.Scan(&id, &name, &image, &price)
 		if err != nil {
 			fmt.Println(err)
 			c.AbortWithStatus(http.StatusInternalServerError)
@@ -65,6 +65,7 @@ func getCartHandler(c *gin.Context, db *sql.DB) {
 			Id:    id,
 			Name:  name,
 			Image: image,
+			Price: price,
 		}
 		products = append(products, product)
 	}
