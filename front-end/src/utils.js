@@ -50,8 +50,8 @@ class _Navbar extends Component {
     const { classes } = this.props;
     return (
       <nav className={classes.navbar}>
-        <Link className={classes.flipkart} href="/products">
-          <img src="/static/logo.png" />
+        <Link href="/products">
+          <img className={classes.flipkart} src="/static/logo.png" />
         </Link>
         <TextField
           id="outlined-bare"

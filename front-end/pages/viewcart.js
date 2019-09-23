@@ -73,6 +73,9 @@ const cartStyles = theme => ({
     lineHeight: "56px",
     padding: "0 24px",
     fontWeight: "500"
+  },
+  mainSection: {
+    margin: theme.spacing(2)
   }
 });
 
@@ -125,18 +128,20 @@ class _Cart extends Component {
     return (
       <Fragment>
         <Navbar />
-        <Typography className={classes.mycart}>My Cart</Typography>
-        <div>
-          {this.state.products.map(product => (
-            <Product product={product} key={product.id} />
-          ))}
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={this.handleOrder}
-          >
-            Buy products
-          </Button>
+        <div className={classes.mainSection}>
+          <Typography className={classes.mycart}>My Cart</Typography>
+          <div>
+            {this.state.products.map(product => (
+              <Product product={product} key={product.id} />
+            ))}
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={this.handleOrder}
+            >
+              Buy products
+            </Button>
+          </div>
         </div>
       </Fragment>
     );
