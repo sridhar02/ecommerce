@@ -17,6 +17,7 @@ const productStyles = theme => ({
   },
   product: {
     marginBottom: "15px"
+    // display: "flex"
   },
   image: {
     margin: "10px",
@@ -34,23 +35,36 @@ function _Product({ classes, product }) {
       <Typography variant="body2" className={classes.name}>
         {product.name}
       </Typography>
+      <Typography>₹{product.price}</Typography>
     </div>
   );
 }
 
 const Product = withStyles(productStyles)(_Product);
 
-function Order({ order }) {
+const orderstyles = theme => ({
+  orderDetails: {
+    marginLeft: theme.spacing(10),
+    marginRight: theme.spacing(20),
+    display: "flex",
+    justifyContent: "space-between"
+  }
+});
+function _Order({ classes, order }) {
   return (
     <div>
-      <Typography>{order.id}</Typography>
-      <Typography>{order.created_at}</Typography>
+      <div className={classes.orderDetails}>
+        <Typography>{order.id}</Typography>
+        <Typography>{order.created_at}</Typography>
+      </div>
       {order.products.map(product => (
         <Product product={product} key={product.id} />
       ))}
     </div>
   );
 }
+
+const Order = withStyles(orderstyles)(_Order);
 
 const ordersStyles = theme => ({});
 
