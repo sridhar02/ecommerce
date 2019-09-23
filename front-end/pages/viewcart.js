@@ -60,6 +60,7 @@ function _Product({ classes, product }) {
       <div>
         <img src={product.image} className={classes.image} />
       </div>
+      <Typography>₹{product.price}</Typography>
     </div>
   );
 }

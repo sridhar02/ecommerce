@@ -54,7 +54,7 @@ class _Product extends Component {
         <Typography variant="body2" className={classes.name}>
           {product.name}
         </Typography>
-        <Typography>₹{product.price}/-</Typography>
+        <Typography>₹{product.price}</Typography>
         <Button variant="contained" color="primary" onClick={this.handleCart}>
           Add to Cart
         </Button>
