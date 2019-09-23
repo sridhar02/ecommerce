@@ -50,17 +50,27 @@ const productStyles = theme => ({
     margin: "10px",
     height: "100px",
     width: "120px"
+  },
+  productDetails: {
+    display: "flex",
+    flexDirection: "column",
+    margin: "10px 10px 10px 10px "
+  },
+  productView: {
+    display: "flex"
   }
 });
 
 function _Product({ classes, product }) {
   return (
-    <div>
-      <Typography variant="body2">{product.name}</Typography>
+    <div className={classes.productView}>
       <div>
         <img src={product.image} className={classes.image} />
       </div>
-      <Typography>₹{product.price}</Typography>
+      <div className={classes.productDetails}>
+        <Typography>{product.name}</Typography>
+        <Typography variant="body2">₹{product.price} </Typography>
+      </div>
     </div>
   );
 }
@@ -75,7 +85,28 @@ const cartStyles = theme => ({
     fontWeight: "500"
   },
   mainSection: {
-    margin: theme.spacing(2)
+    margin: theme.spacing(2),
+    minWidth: "800px",
+    margin: "20px auto",
+    border: "1px solid #ccc",
+    backgroundColor: "white",
+    padding: "10px"
+  },
+  placeOrder: {
+    display: "flex",
+    justifyContent: "flex-end"
+  },
+  sideSection: {
+    border: "1px solid #ccc",
+    minWidth: "400px",
+    margin: "20px auto",
+    marginRight: "60px",
+    backgroundColor: "white",
+    alignItems: "center"
+  },
+  section: {
+    display: "flex",
+    backgroundColor: "#eceff1"
   }
 });
 
@@ -128,19 +159,26 @@ class _Cart extends Component {
     return (
       <Fragment>
         <Navbar />
-        <div className={classes.mainSection}>
-          <Typography className={classes.mycart}>My Cart</Typography>
-          <div>
-            {this.state.products.map(product => (
-              <Product product={product} key={product.id} />
-            ))}
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={this.handleOrder}
-            >
-              Buy products
-            </Button>
+        <div className={classes.section}>
+          <div className={classes.mainSection}>
+            <Typography className={classes.mycart}>My Cart</Typography>
+            <div>
+              {this.state.products.map(product => (
+                <Product product={product} key={product.id} />
+              ))}
+            </div>
+            <div className={classes.placeOrder}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={this.handleOrder}
+              >
+                Place Order
+              </Button>
+            </div>
+          </div>
+          <div className={classes.sideSection}>
+            <Typography variant="h6">PRICE DETAILS</Typography>
           </div>
         </div>
       </Fragment>

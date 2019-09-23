@@ -9,6 +9,7 @@ import { Button, Typography } from "@material-ui/core";
 
 const productStyles = theme => ({
   name: {
+    marginTop: theme.spacing(0.5),
     height: theme.spacing(4.5),
     display: "flex",
     marginLeft: "10px",
@@ -54,7 +55,9 @@ class _Product extends Component {
         <Typography variant="body2" className={classes.name}>
           {product.name}
         </Typography>
-        <Typography>₹{product.price}</Typography>
+        <Typography variant="body2" className={classes.name}>
+          ₹{product.price}
+        </Typography>
         <Button variant="contained" color="primary" onClick={this.handleCart}>
           Add to Cart
         </Button>

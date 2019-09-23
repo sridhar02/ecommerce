@@ -16,8 +16,8 @@ const productStyles = theme => ({
     maxWidth: "120px"
   },
   product: {
-    marginBottom: "15px"
-    // display: "flex"
+    // display: "flex",
+    // margin: "15px"
   },
   image: {
     margin: "10px",
@@ -35,7 +35,7 @@ function _Product({ classes, product }) {
       <Typography variant="body2" className={classes.name}>
         {product.name}
       </Typography>
-      <Typography>₹{product.price}</Typography>
+      <Typography variant="body2">₹{product.price}</Typography>
     </div>
   );
 }
@@ -66,7 +66,11 @@ function _Order({ classes, order }) {
 
 const Order = withStyles(orderstyles)(_Order);
 
-const ordersStyles = theme => ({});
+const ordersStyles = theme => ({
+  mainsection:{
+    backgroundColor:
+  }
+});
 
 class _Orders extends Component {
   constructor(props) {
@@ -93,7 +97,7 @@ class _Orders extends Component {
   }
   render() {
     return (
-      <div>
+      <div className={classes.mainsection}>
         <Navbar />
         <Typography variant="h6">My Orders</Typography>
         {this.state.orders.map(order => (
