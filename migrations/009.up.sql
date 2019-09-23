@@ -1,1 +1,1 @@
-ALTER TABLE products ADD COLUMN price VARCHAR(30);
+ALTER TABLE products ADD COLUMN price INTEGER;
