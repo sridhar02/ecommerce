@@ -156,6 +156,7 @@ type Product struct {
 	Id    int    `json:"id,omitempty"`
 	Name  string `json:"name,omitempty"`
 	Image string `json:"image,omitempty"`
+	Price string `json:"price,omitempty"`
 }
 
 func getProductsHandler(c *gin.Context, db *sql.DB) {
@@ -167,11 +168,11 @@ func getProductsHandler(c *gin.Context, db *sql.DB) {
 		return
 	}
 
-	var name, image string
+	var name, image, price string
 	var id int
 	products := []Product{}
 	for rows.Next() {
-		err = rows.Scan(&id, &name, &image)
+		err = rows.Scan(&id, &name, &image, &price)
 		if err != nil {
 			fmt.Println(err)
 			c.AbortWithStatus(http.StatusInternalServerError)
@@ -181,6 +182,7 @@ func getProductsHandler(c *gin.Context, db *sql.DB) {
 			Id:    id,
 			Name:  name,
 			Image: image,
+			Price: price,
 		}
 		products = append(products, product)
 	}
