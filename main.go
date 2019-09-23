@@ -156,7 +156,7 @@ type Product struct {
 	Id    int    `json:"id,omitempty"`
 	Name  string `json:"name,omitempty"`
 	Image string `json:"image,omitempty"`
-	Price string `json:"price,omitempty"`
+	Price int    `json:"price,omitempty"`
 }
 
 func getProductsHandler(c *gin.Context, db *sql.DB) {
@@ -168,8 +168,8 @@ func getProductsHandler(c *gin.Context, db *sql.DB) {
 		return
 	}
 
-	var name, image, price string
-	var id int
+	var name, image string
+	var id, price int
 	products := []Product{}
 	for rows.Next() {
 		err = rows.Scan(&id, &name, &image, &price)

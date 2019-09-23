@@ -100,7 +100,7 @@ func getOrdersHandler(c *gin.Context, db *sql.DB) {
 	}
 
 	for i, orderResponse := range orderResponses {
-		rows, err := db.Query(`SELECT products.id,products.name,products.image FROM order_products JOIN 
+		rows, err := db.Query(`SELECT products.id,products.name,products.image,products.price FROM order_products JOIN 
 							   products ON order_products.product_id= products.id WHERE order_id =$1`,
 			orderResponse.ID)
 		if err != nil {
@@ -111,9 +111,9 @@ func getOrdersHandler(c *gin.Context, db *sql.DB) {
 
 		products := []Product{}
 		for rows.Next() {
-			var id int
+			var id, price int
 			var name, image string
-			err = rows.Scan(&id, &name, &image)
+			err = rows.Scan(&id, &name, &image, &price)
 			if err != nil {
 				fmt.Println(err)
 				c.AbortWithStatus(http.StatusInternalServerError)
@@ -123,6 +123,7 @@ func getOrdersHandler(c *gin.Context, db *sql.DB) {
 				Id:    id,
 				Name:  name,
 				Image: image,
+				Price: price,
 			}
 			products = append(products, product)
 		}
