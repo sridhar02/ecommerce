@@ -2,14 +2,20 @@ import React, { Component, Fragment } from "react";
 
 import { Navbar } from "../src/utils";
 
+import Link from "next/link";
+
 import { withStyles } from "@material-ui/core/styles";
 
 import { Button, TextField, Typography } from "@material-ui/core";
 
 import Radio from "@material-ui/core/Radio";
+
 import RadioGroup from "@material-ui/core/RadioGroup";
+
 import FormControlLabel from "@material-ui/core/FormControlLabel";
+
 import FormControl from "@material-ui/core/FormControl";
+
 import FormLabel from "@material-ui/core/FormLabel";
 
 const personalInformationStyles = theme => ({
@@ -444,15 +450,28 @@ function FAQS() {
 
 const userStyles = theme => ({
   userInformation: {
-    maxWidth: "900px",
-    margin: "0 auto"
+    display: "flex",
+    flexDirection: "column",
+    minWidth: "700px",
+    margin: "0 auto",
+    marginLeft: "16px",
+    padding: "24px 32px 0",
+    border: "1px solid #eceff1",
+    backgroundColor: "white"
+    // height: "80px"
   },
   userSidebar: {
-    maxWidth: "300px"
+    border: "1px solid #eceff1",
+    backgroundColor: "white",
+    minWidth: "300px",
+    padding: "20px"
+    // height: "40px"
   },
 
   userSection: {
-    display: "flex"
+    display: "flex",
+    margin: "20px",
+    backgroundColor: "#eceff1"
   }
 });
 
@@ -467,13 +486,19 @@ class _User extends Component {
         <Navbar />
         <div className={classes.userSection}>
           <div className={classes.userSidebar}>
-            <Button>My orders</Button>
+            <div>User Details</div>
+            <div>
+              <Link href="/orders">
+                <Button>My orders</Button>
+              </Link>
+            </div>
           </div>
           <div className={classes.userInformation}>
             <PersonalInformation />
             <Email />
             <Phonenumber />
             <FAQS />
+            <div></div>
           </div>
         </div>
       </Fragment>
