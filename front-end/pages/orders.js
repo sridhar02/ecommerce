@@ -12,12 +12,10 @@ const productStyles = theme => ({
   name: {
     height: theme.spacing(4.5),
     display: "flex",
-    // marginLeft: "10px",
     maxWidth: "120px"
   },
   product: {
     display: "flex"
-    // margin: "15px"
   },
   image: {
     margin: "10px",
@@ -51,8 +49,6 @@ const Product = withStyles(productStyles)(_Product);
 
 const orderstyles = theme => ({
   orderDetails: {
-    // marginLeft: theme.spacing(10),
-    // marginRight: theme.spacing(20),
     display: "flex",
     justifyContent: "space-between",
     borderBottom: "1px solid #eceff1",
@@ -102,7 +98,7 @@ class _Orders extends Component {
     };
   }
   componentDidMount() {
-    fetch("http://localhost:8000/orders", {
+    fetch(`${process.env.API_URL}/orders`, {
       method: "GET",
       headers: {
         Accept: "applicaton/json",
