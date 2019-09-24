@@ -3,9 +3,9 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	"log"
 	"math/rand"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 
@@ -274,9 +274,14 @@ func main() {
 
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		fmt.Println(".env file not found")
 	}
-	connStr := "user=postgres dbname = ecommerce_website host=localhost password=test1234 sslmode=disable"
+	connStr := fmt.Sprintf("user=%s dbname=%s host=%s password=%s sslmode=disable",
+		os.Getenv("DB_USER"),
+		os.Getenv("DB_NAME"),
+		os.Getenv("DB_HOST"),
+		os.Getenv("DB_PASSWORD"),
+	)
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		fmt.Println(err)
@@ -301,8 +306,6 @@ func main() {
 		MaxAge:           12 * time.Hour,
 	}))
 
-	http.Handle("/", router)
-
 	router.POST("/user/signup", func(c *gin.Context) { postUserSignupHandler(c, db) })
 	router.POST("/user/sign_in", func(c *gin.Context) { PostUserSigninHandler(c, db) })
 	router.DELETE("/login", func(c *gin.Context) { deleteLoginHandler(c, db) })
@@ -313,7 +316,14 @@ func main() {
 	router.POST("/orders", func(c *gin.Context) { postOrderHandler(c, db) })
 	router.GET("/orders", func(c *gin.Context) { getOrdersHandler(c, db) })
 
-	http.ListenAndServe(":8000", nil)
-	http.ListenAndServe(":8000/signin", nil)
+	port := os.Getenv("PORT")
+
+	if port != "" {
+		port = ":" + port
+	} else {
+		port = ":8000"
+	}
+
+	router.Run(port)
 
 }
