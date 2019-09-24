@@ -22,6 +22,12 @@ const emptyCartStyles = theme => ({
   },
   button: {
     textAlign: "center"
+  },
+  emptySection: {
+    border: "1px solid #eceff1",
+    margin: "20px",
+    padding: "20px",
+    backgroundColor: "white"
   }
 });
 
@@ -30,16 +36,18 @@ function _EmptyCart(props) {
   return (
     <div>
       <Navbar />
-      <Typography className={classes.mycart}>My Cart</Typography>
-      <div className={classes.image}>
-        <img src="/static/cart.png" />
-      </div>
-      <div className={classes.button}>
-        <Button variant="contained" color="primary">
-          <Link href="/products">
-            <a className={classes.link}>SHOP KNOW</a>
-          </Link>
-        </Button>
+      <div className={classes.emptySection}>
+        <Typography className={classes.mycart}>My Cart</Typography>
+        <div className={classes.image}>
+          <img src="/static/cart.png" />
+        </div>
+        <div className={classes.button}>
+          <Button variant="contained" color="primary">
+            <Link href="/products">
+              <a className={classes.link}>SHOP KNOW</a>
+            </Link>
+          </Button>
+        </div>
       </div>
     </div>
   );
