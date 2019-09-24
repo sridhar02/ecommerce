@@ -1,0 +1,8 @@
+{
+	"version": 2,
+	"builds": [
+		{ "src": "front-end/package.json", "use": "@now/next" },
+		{ "src": "*.go", "use": "@now/go" }
+	],
+	"routes": [{ "src": "/products", "dest": "main.go" }]
+}
