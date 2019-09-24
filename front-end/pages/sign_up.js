@@ -102,7 +102,7 @@ class _Signup extends Component {
 
   handleSubmit = event => {
     event.preventDefault();
-    fetch("http://localhost:8000/user/signup", {
+    fetch(`${process.env.API_URL}/signup`, {
       method: "POST",
       headers: {
         Accept: "applicaton/json",

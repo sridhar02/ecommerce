@@ -29,7 +29,7 @@ class _Product extends Component {
   handleCart = event => {
     const { product } = this.props;
     event.preventDefault();
-    fetch("http://localhost:8000/cart", {
+    fetch(`${process.env.API_URL}/cart`, {
       method: "POST",
       headers: {
         Accept: "applicaton/json",
@@ -78,7 +78,7 @@ const productsStyles = theme => ({
 
 class _Products extends Component {
   static getInitialProps = async () => {
-    const res = await fetch("http://localhost:8000/products");
+    const res = await fetch(`${process.env.API_URL}/products`);
     const products = await res.json();
     return { products };
   };
@@ -91,7 +91,7 @@ class _Products extends Component {
   }
 
   componentDidMount() {
-    fetch("http://localhost:8000/products")
+    fetch(`${process.env.API_URL}/products`)
       .then(res => res.json())
       .then(products => {
         this.setState({

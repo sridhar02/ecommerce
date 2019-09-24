@@ -73,13 +73,20 @@ const productStyles = theme => ({
 
 function _Product({ classes, product }) {
   return (
-    <div className={classes.productView}>
-      <div>
-        <img src={product.image} className={classes.image} />
+    <div>
+      <div className={classes.productView}>
+        <div>
+          <img src={product.image} className={classes.image} />
+        </div>
+        <div className={classes.productDetails}>
+          <Typography>{product.name}</Typography>
+          <Typography variant="body2">₹{product.price} </Typography>
+        </div>
       </div>
-      <div className={classes.productDetails}>
-        <Typography>{product.name}</Typography>
-        <Typography variant="body2">₹{product.price} </Typography>
+      <div>
+        <Button>-</Button>
+        <TextField />
+        <Button>+</Button>
       </div>
     </div>
   );
@@ -129,7 +136,7 @@ class _Cart extends Component {
   }
 
   componentDidMount() {
-    fetch("http://localhost:8000/cart", {
+    fetch(`${process.env.API_URL}/cart`, {
       method: "GET",
       headers: {
         Accept: "applicaton/json",
@@ -147,7 +154,7 @@ class _Cart extends Component {
 
   handleOrder = event => {
     event.preventDefault();
-    fetch("http://localhost:8000/orders", {
+    fetch(`${process.env.API_URL}/orders`, {
       method: "POST",
       headers: {
         Accept: "applicaton/json",

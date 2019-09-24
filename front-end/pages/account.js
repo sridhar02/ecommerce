@@ -63,7 +63,7 @@ class _PersonalInformation extends Component {
 
   handleSubmit = event => {
     event.preventDefault();
-    fetch("http://localhost:8000/user", {
+    fetch(`${process.env.API_URL}/user`, {
       method: "PUT",
       headers: {
         Accept: "applicaton/json",
@@ -208,7 +208,7 @@ class _Email extends Component {
 
   handleSubmit = event => {
     event.preventDefault();
-    fetch("http://localhost:8000/user", {
+    fetch(`${process.env.API_URL}/user`, {
       method: "PUT",
       headers: {
         Accept: "applicaton/json",

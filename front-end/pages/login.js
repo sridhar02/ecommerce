@@ -89,7 +89,7 @@ class _Login extends Component {
 
   handleSubmit = event => {
     event.preventDefault();
-    fetch("http://localhost:8000/user/sign_in", {
+    fetch(`${process.env.API_URL}/user/sign_in`, {
       method: "POST",
       headers: {
         Accept: "applicaton/json",
