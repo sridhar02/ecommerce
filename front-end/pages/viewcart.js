@@ -4,6 +4,8 @@ import { Navbar } from "../src/utils";
 
 import Link from "next/link";
 
+import Router, { withRouter } from "next/router";
+
 import { withStyles } from "@material-ui/core/styles";
 
 import { Button, TextField, Typography } from "@material-ui/core";
@@ -146,7 +148,7 @@ class _Cart extends Component {
       }
     }).then(response => {
       if (response.status === 201) {
-        router.push("/orders");
+        Router.push("/orders");
       }
     });
   };
