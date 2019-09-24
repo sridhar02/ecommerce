@@ -12,17 +12,22 @@ const productStyles = theme => ({
   name: {
     height: theme.spacing(4.5),
     display: "flex",
-    marginLeft: "10px",
+    // marginLeft: "10px",
     maxWidth: "120px"
   },
   product: {
-    // display: "flex",
+    display: "flex"
     // margin: "15px"
   },
   image: {
     margin: "10px",
     height: "100px",
     width: "120px"
+  },
+  productDetails: {
+    margin: "10px",
+    display: "flex",
+    flexDirection: "column"
   }
 });
 
@@ -32,10 +37,12 @@ function _Product({ classes, product }) {
       <div>
         <img className={classes.image} src={product.image} />
       </div>
-      <Typography variant="body2" className={classes.name}>
-        {product.name}
-      </Typography>
-      <Typography variant="body2">₹{product.price}</Typography>
+      <div className={classes.productDetails}>
+        <Typography variant="body2" className={classes.name}>
+          {product.name}
+        </Typography>
+        <Typography variant="body2">₹{product.price}</Typography>
+      </div>
     </div>
   );
 }
@@ -44,18 +51,25 @@ const Product = withStyles(productStyles)(_Product);
 
 const orderstyles = theme => ({
   orderDetails: {
-    marginLeft: theme.spacing(10),
-    marginRight: theme.spacing(20),
+    // marginLeft: theme.spacing(10),
+    // marginRight: theme.spacing(20),
     display: "flex",
-    justifyContent: "space-between"
+    justifyContent: "space-between",
+    borderBottom: "1px solid #eceff1",
+    backgroundColor: "#eceff1",
+    padding: "10px"
+  },
+  productSection: {
+    border: "1px solid #eceff1",
+    margin: "20px"
   }
 });
 function _Order({ classes, order }) {
   return (
-    <div>
+    <div className={classes.productSection}>
       <div className={classes.orderDetails}>
-        <Typography>{order.id}</Typography>
-        <Typography>{order.created_at}</Typography>
+        <Typography>Order Number: {order.id}</Typography>
+        <Typography> Ordered On: {order.created_at}</Typography>
       </div>
       {order.products.map(product => (
         <Product product={product} key={product.id} />
@@ -67,8 +81,16 @@ function _Order({ classes, order }) {
 const Order = withStyles(orderstyles)(_Order);
 
 const ordersStyles = theme => ({
-  mainsection:{
-    backgroundColor:
+  section: {
+    backgroundColor: "#eceff1"
+  },
+  mainSection: {
+    margin: "0px 40px",
+    border: "1px solid #ccc",
+    backgroundColor: "white"
+  },
+  title: {
+    margin: "25px"
   }
 });
 
@@ -96,13 +118,18 @@ class _Orders extends Component {
       });
   }
   render() {
+    const { classes } = this.props;
     return (
-      <div className={classes.mainsection}>
+      <div className={classes.section}>
         <Navbar />
-        <Typography variant="h6">My Orders</Typography>
-        {this.state.orders.map(order => (
-          <Order order={order} key={order.id} />
-        ))}
+        <div className={classes.mainSection}>
+          <Typography variant="h6" className={classes.title}>
+            My Account > My Orders
+          </Typography>
+          {this.state.orders.map(order => (
+            <Order order={order} key={order.id} />
+          ))}
+        </div>
       </div>
     );
   }
