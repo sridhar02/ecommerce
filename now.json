@@ -5,7 +5,7 @@
 			"API_URL": "@api_url"
 		}
 	},
-	"builds": [{ "src": "front-end/package.json", "use": "@now/next" }],
+	"builds": [{ "src": "package.json", "use": "@now/next" }],
 	"env": {
 		"API_URL": "@api_url"
 	}
