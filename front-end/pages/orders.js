@@ -4,6 +4,8 @@ import { Navbar } from "../src/utils";
 
 import Link from "next/link";
 
+import Router, { withRouter } from "next/router";
+
 import { withStyles } from "@material-ui/core/styles";
 
 import { Button, TextField, Typography } from "@material-ui/core";
@@ -106,7 +108,13 @@ class _Orders extends Component {
         Authorization: `Bearer ${localStorage.getItem("secret")}`
       }
     })
-      .then(res => res.json())
+      .then(response => {
+        if (response.status === 200) {
+          return response.json();
+        } else if (response.status === 401) {
+          return Router.push("/login");
+        }
+      })
       .then(orders => {
         this.setState({
           orders: orders
