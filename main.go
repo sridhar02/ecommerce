@@ -193,20 +193,8 @@ func getProductsHandler(c *gin.Context, db *sql.DB) {
 
 func userUpdateHandler(c *gin.Context, db *sql.DB) {
 
-	value := c.GetHeader("Authorization")
-	secret := strings.TrimPrefix(value, "Bearer ")
-
-	if secret == "" {
-		c.Status(http.StatusUnauthorized)
-		return
-	}
-
-	var userId int
-	row := db.QueryRow(`SELECT user_id FROM logins WHERE secret=$1`, secret)
-	err := row.Scan(&userId)
+	userId, err := authorization(c, db)
 	if err != nil {
-		fmt.Println(err)
-		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 
@@ -313,6 +301,7 @@ func main() {
 	router.PUT("/user", func(c *gin.Context) { userUpdateHandler(c, db) })
 	router.POST("/cart", func(c *gin.Context) { postToCartHandler(c, db) })
 	router.GET("/cart", func(c *gin.Context) { getCartHandler(c, db) })
+	router.PUT("/cart", func(c *gin.Context) { updateCartHandler(c, db) })
 	router.POST("/orders", func(c *gin.Context) { postOrderHandler(c, db) })
 	router.GET("/orders", func(c *gin.Context) { getOrdersHandler(c, db) })
 
