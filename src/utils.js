@@ -60,7 +60,6 @@ class _Navbar extends Component {
             </Link>
             <InputBase
               id="outlined-bare"
-              margin="normal"
               variant="outlined"
               inputProps={{ "aria-label": "bare" }}
               className={classes.searchInput}
