@@ -59,6 +59,7 @@ const productStyles = theme => ({
   image: {
     margin: "10px",
     height: "100px",
+    marginLeft: "30px",
     width: "120px"
   },
   productDetails: {
@@ -69,43 +70,65 @@ const productStyles = theme => ({
   textField: {
     marginLeft: theme.spacing(1),
     marginRight: theme.spacing(1),
-    width: "150px"
+    width: "50px",
+    padding: "5px",
+    borderRadius: "2px",
+    border: "1px solid #ccc"
   },
   productView: {
     display: "flex"
   }
 });
 
-function _Product({ classes, product }) {
-  return (
-    <div>
-      <div className={classes.productView}>
-        <div>
-          <img src={product.image} className={classes.image} />
-        </div>
-        <div className={classes.productDetails}>
-          <Typography>{product.name}</Typography>
-          <Typography variant="body2">₹{product.price} </Typography>
-        </div>
-      </div>
-      <div>
-        <TextField
-          placeholder="QUANTITY"
-          id="outlined-number"
-          label="Quantity"
-          type="number"
-          className={classes.textField}
-          InputLabelProps={{
-            shrink: true
-          }}
-          margin="normal"
-          variant="outlined"
-        />
-      </div>
-    </div>
-  );
-}
+class _Product extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      quantity: 1
+    };
+  }
 
+  handleIncrement = event => {
+    this.setState({
+      quantity: this.state.quantity + 1
+    });
+  };
+
+  handleDecrement = event => {
+    if (this.state.quantity === 1) {
+    } else {
+      this.setState({
+        quantity: this.state.quantity - 1
+      });
+    }
+  };
+
+  render() {
+    const { classes, product } = this.props;
+    return (
+      <div>
+        <div className={classes.productView}>
+          <div>
+            <img src={product.image} className={classes.image} />
+          </div>
+          <div className={classes.productDetails}>
+            <Typography>{product.name}</Typography>
+            <Typography variant="body2">₹{product.price} </Typography>
+          </div>
+        </div>
+        <div>
+          <Button onClick={this.handleDecrement}>-</Button>
+          <input
+            className={classes.textField}
+            name="quantity"
+            value={this.state.quantity}
+          />
+          <Button onClick={this.handleIncrement}>+</Button>
+        </div>
+      </div>
+    );
+  }
+}
 const Product = withStyles(productStyles)(_Product);
 
 const cartStyles = theme => ({
