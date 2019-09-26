@@ -66,6 +66,11 @@ const productStyles = theme => ({
     flexDirection: "column",
     margin: "10px 10px 10px 10px "
   },
+  textField: {
+    marginLeft: theme.spacing(1),
+    marginRight: theme.spacing(1),
+    width: "150px"
+  },
   productView: {
     display: "flex"
   }
@@ -84,9 +89,18 @@ function _Product({ classes, product }) {
         </div>
       </div>
       <div>
-        <Button>-</Button>
-        <TextField />
-        <Button>+</Button>
+        <TextField
+          placeholder="QUANTITY"
+          id="outlined-number"
+          label="Quantity"
+          type="number"
+          className={classes.textField}
+          InputLabelProps={{
+            shrink: true
+          }}
+          margin="normal"
+          variant="outlined"
+        />
       </div>
     </div>
   );
