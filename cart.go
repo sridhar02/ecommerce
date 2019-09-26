@@ -10,6 +10,7 @@ import (
 type Cart struct {
 	ProductId int `json:"product_id,omitempty"`
 	UserId    int `json:"user_id,omitempty"`
+	Quantity  int `json:"quantity,omitempty"`
 }
 
 func postToCartHandler(c *gin.Context, db *sql.DB) {
@@ -72,4 +73,30 @@ func getCartHandler(c *gin.Context, db *sql.DB) {
 
 	c.JSON(http.StatusOK, products)
 
+}
+
+func updateCartHandler(c *gin.Context, db *sql.DB) {
+
+	userId, err := authorization(c, db)
+	if err != nil {
+		return
+	}
+
+	cart := Cart{}
+	err = c.BindJSON(&cart)
+	if err != nil {
+		fmt.Println(err)
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+
+	_, err = db.Exec(`UPDATE cart SET quantity= $1 WHERE product_id=$2 AND user_id= $3`,
+		cart.Quantity, cart.ProductId, userId)
+	if err != nil {
+		fmt.Println(err)
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+
+	c.Status(http.StatusNoContent)
 }

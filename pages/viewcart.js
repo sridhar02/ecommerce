@@ -70,7 +70,7 @@ const productStyles = theme => ({
   textField: {
     marginLeft: theme.spacing(1),
     marginRight: theme.spacing(1),
-    width: "50px",
+    width: "15px",
     padding: "5px",
     borderRadius: "2px",
     border: "1px solid #ccc"
@@ -88,6 +88,12 @@ class _Product extends Component {
     };
   }
 
+  handleChange = event => {
+    this.setState({
+      [event.target.name]: event.target.value
+    });
+  };
+
   handleIncrement = event => {
     this.setState({
       quantity: this.state.quantity + 1
@@ -103,6 +109,22 @@ class _Product extends Component {
     }
   };
 
+  handleSubmit = event => {
+    event.preventDefault();
+    fetch(`${process.env.API_URL}/cart`, {
+      method: "PUT",
+      headers: {
+        Accept: "applicaton/json",
+        "Content-type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("secret")}`
+      },
+      body: JSON.stringify({
+        prouct_id: this.props.product.id,
+        quantity: this.state.quantity
+      })
+    });
+  };
+
   render() {
     const { classes, product } = this.props;
     return (
@@ -116,15 +138,21 @@ class _Product extends Component {
             <Typography variant="body2">₹{product.price} </Typography>
           </div>
         </div>
-        <div>
-          <Button onClick={this.handleDecrement}>-</Button>
-          <input
-            className={classes.textField}
-            name="quantity"
-            value={this.state.quantity}
-          />
-          <Button onClick={this.handleIncrement}>+</Button>
-        </div>
+        <form onSubmit={this.handleSubmit}>
+          <div>
+            <Button onClick={this.handleDecrement}>-</Button>
+            <span className={classes.textField} name="quantity">
+              {this.state.quantity}
+            </span>
+            <Button
+              onClick={this.handleIncrement}
+              onChange={this.handleChange}
+              type="submit"
+            >
+              +
+            </Button>
+          </div>
+        </form>
       </div>
     );
   }
