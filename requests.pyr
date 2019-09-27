@@ -70,6 +70,6 @@ put('http://localhost:8000/cart',
 	headers={
 	    "Authorization": "Bearer MaPEZQleQYhYzRyWJjPjzpfRFEgmotaF  "
 	},json={
-			'product_id':10,
+			'product_id':4,
 			'quantity':5
 	})
