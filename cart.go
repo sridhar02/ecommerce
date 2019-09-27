@@ -45,16 +45,18 @@ func postToCartHandler(c *gin.Context, db *sql.DB) {
 		return
 	}
 
-	if count != 1 {
-		_, err = db.Exec(`INSERT INTO cart(product_id,user_id,Quantity)VALUES($1,$2,$3)`, cart.ProductId, userId, 1)
-		if err != nil {
-			fmt.Println(err)
-			c.AbortWithStatus(http.StatusInternalServerError)
-			return
-		}
-
-		c.Status(http.StatusCreated)
+	if count == 1 {
+		c.Status(http.StatusExpectationFailed)
+		return
 	}
+	_, err = db.Exec(`INSERT INTO cart(product_id,user_id,Quantity)VALUES($1,$2,$3)`, cart.ProductId, userId, 1)
+	if err != nil {
+		fmt.Println(err)
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+
+	c.Status(http.StatusCreated)
 }
 
 func getCartHandler(c *gin.Context, db *sql.DB) {
