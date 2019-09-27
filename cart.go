@@ -13,6 +13,14 @@ type Cart struct {
 	Quantity  int `json:"quantity,omitempty"`
 }
 
+type CartProduct struct {
+	Id       int    `json:"id,omitempty"`
+	Name     string `json:"name,omitempty"`
+	Image    string `json:"image,omitempty"`
+	Price    int    `json:"price,omitempty"`
+	Quantity int    `json:"quantity,omitempty"`
+}
+
 func postToCartHandler(c *gin.Context, db *sql.DB) {
 
 	userId, err := authorization(c, db)
@@ -28,13 +36,25 @@ func postToCartHandler(c *gin.Context, db *sql.DB) {
 		return
 	}
 
-	_, err = db.Exec(`INSERT INTO cart(product_id,user_id)VALUES($1,$2)`, cart.ProductId, userId)
+	var count int
+	row := db.QueryRow(`SELECT count(*) FROM cart WHERE user_id = $1 AND product_id = $2`, userId, cart.ProductId)
+	err = row.Scan(&count)
 	if err != nil {
 		fmt.Println(err)
 		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
-	c.Status(http.StatusCreated)
+
+	if count != 1 {
+		_, err = db.Exec(`INSERT INTO cart(product_id,user_id,Quantity)VALUES($1,$2,$3)`, cart.ProductId, userId, 1)
+		if err != nil {
+			fmt.Println(err)
+			c.AbortWithStatus(http.StatusInternalServerError)
+			return
+		}
+
+		c.Status(http.StatusCreated)
+	}
 }
 
 func getCartHandler(c *gin.Context, db *sql.DB) {
@@ -44,34 +64,35 @@ func getCartHandler(c *gin.Context, db *sql.DB) {
 		return
 	}
 
-	rows, err := db.Query(`SELECT products.id,products.name,products.image,products.price FROM products JOIN 
-	                         cart ON cart.product_id = products.id 	where  cart.user_id =  $1`, userId)
+	rows, err := db.Query(`SELECT products.id,products.name,products.image,products.price,cart.quantity FROM 
+		                 products JOIN cart ON cart.product_id = products.id WHERE cart.user_id =  $1`, userId)
 	if err != nil {
 		fmt.Println(err)
 		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 
-	products := []Product{}
+	cartProducts := []CartProduct{}
 	for rows.Next() {
-		var id, price int
+		var id, price, quantity int
 		var image, name string
-		err = rows.Scan(&id, &name, &image, &price)
+		err = rows.Scan(&id, &name, &image, &price, &quantity)
 		if err != nil {
 			fmt.Println(err)
 			c.AbortWithStatus(http.StatusInternalServerError)
 			return
 		}
-		product := Product{
-			Id:    id,
-			Name:  name,
-			Image: image,
-			Price: price,
+		cartProduct := CartProduct{
+			Id:       id,
+			Name:     name,
+			Image:    image,
+			Price:    price,
+			Quantity: quantity,
 		}
-		products = append(products, product)
+		cartProducts = append(cartProducts, cartProduct)
 	}
 
-	c.JSON(http.StatusOK, products)
+	c.JSON(http.StatusOK, cartProducts)
 
 }
 

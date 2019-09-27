@@ -4,6 +4,8 @@ import { Navbar } from "../src/utils";
 
 import Link from "next/link";
 
+import fetch from "isomorphic-unfetch";
+
 import Router, { withRouter } from "next/router";
 
 import { withStyles } from "@material-ui/core/styles";
@@ -84,19 +86,28 @@ class _Product extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      quantity: 1
+      quantity: props.cartProduct.quantity
     };
   }
-
-  handleChange = event => {
-    this.setState({
-      [event.target.name]: event.target.value
-    });
-  };
 
   handleIncrement = event => {
     this.setState({
       quantity: this.state.quantity + 1
+    });
+    fetch(`${process.env.API_URL}/cart`, {
+      method: "PUT",
+      headers: {
+        Accept: "applicaton/json",
+        "Content-type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("secret")}`
+      },
+      body: JSON.stringify({
+        product_id: this.props.cartProduct.id,
+        quantity: this.state.quantity + 1
+      })
+    }).then(response => {
+      if (response.status === 204) {
+      }
     });
   };
 
@@ -107,10 +118,6 @@ class _Product extends Component {
         quantity: this.state.quantity - 1
       });
     }
-  };
-
-  handleSubmit = event => {
-    event.preventDefault();
     fetch(`${process.env.API_URL}/cart`, {
       method: "PUT",
       headers: {
@@ -119,40 +126,33 @@ class _Product extends Component {
         Authorization: `Bearer ${localStorage.getItem("secret")}`
       },
       body: JSON.stringify({
-        prouct_id: this.props.product.id,
-        quantity: this.state.quantity
+        product_id: this.props.cartProduct.id,
+        quantity: this.state.quantity - 1
       })
+    }).then(response => {
+      if (response.status === 204) {
+      }
     });
   };
 
   render() {
-    const { classes, product } = this.props;
+    const { classes, cartProduct } = this.props;
     return (
       <div>
         <div className={classes.productView}>
           <div>
-            <img src={product.image} className={classes.image} />
+            <img src={cartProduct.image} className={classes.image} />
           </div>
           <div className={classes.productDetails}>
-            <Typography>{product.name}</Typography>
-            <Typography variant="body2">₹{product.price} </Typography>
+            <Typography>{cartProduct.name}</Typography>
+            <Typography variant="body2">₹{cartProduct.price} </Typography>
           </div>
         </div>
-        <form onSubmit={this.handleSubmit}>
-          <div>
-            <Button onClick={this.handleDecrement}>-</Button>
-            <span className={classes.textField} name="quantity">
-              {this.state.quantity}
-            </span>
-            <Button
-              onClick={this.handleIncrement}
-              onChange={this.handleChange}
-              type="submit"
-            >
-              +
-            </Button>
-          </div>
-        </form>
+        <div>
+          <Button onClick={this.handleDecrement}>-</Button>
+          <span className={classes.textField}>{this.state.quantity}</span>
+          <Button onClick={this.handleIncrement}>+</Button>
+        </div>
       </div>
     );
   }
@@ -196,7 +196,7 @@ class _Cart extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      products: props.products || []
+      cartProducts: props.cartProducts || []
     };
   }
 
@@ -210,9 +210,9 @@ class _Cart extends Component {
       }
     })
       .then(res => res.json())
-      .then(products => {
+      .then(cartProducts => {
         this.setState({
-          products: products
+          cartProducts: cartProducts
         });
       });
   }
@@ -234,8 +234,8 @@ class _Cart extends Component {
   };
 
   render() {
-    const { classes, products } = this.props;
-    if (this.state.products.length === 0) {
+    const { classes, cartProducts } = this.props;
+    if (this.state.cartProducts.length === 0) {
       return <EmptyCart />;
     }
     return (
@@ -245,8 +245,8 @@ class _Cart extends Component {
           <div className={classes.mainSection}>
             <Typography className={classes.mycart}>My Cart</Typography>
             <div>
-              {this.state.products.map(product => (
-                <Product product={product} key={product.id} />
+              {this.state.cartProducts.map(cartProduct => (
+                <Product cartProduct={cartProduct} key={cartProduct.id} />
               ))}
             </div>
             <div className={classes.placeOrder}>
