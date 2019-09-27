@@ -10,6 +10,10 @@ import Router, { withRouter } from "next/router";
 
 import { withStyles } from "@material-ui/core/styles";
 
+import IconButton from "@material-ui/core/IconButton";
+import AddIcon from "@material-ui/icons/Add";
+import RemoveIcon from "@material-ui/icons/Remove";
+
 import { Button, TextField, Typography } from "@material-ui/core";
 
 const emptyCartStyles = theme => ({
@@ -79,6 +83,9 @@ const productStyles = theme => ({
   },
   productView: {
     display: "flex"
+  },
+  icons: {
+    marginLeft: "20px"
   }
 });
 
@@ -148,10 +155,14 @@ class _Product extends Component {
             <Typography variant="body2">₹{cartProduct.price} </Typography>
           </div>
         </div>
-        <div>
-          <Button onClick={this.handleDecrement}>-</Button>
+        <div className={classes.icons}>
+          <IconButton onClick={this.handleDecrement}>
+            <RemoveIcon />
+          </IconButton>
           <span className={classes.textField}>{this.state.quantity}</span>
-          <Button onClick={this.handleIncrement}>+</Button>
+          <IconButton onClick={this.handleIncrement}>
+            <AddIcon />
+          </IconButton>
         </div>
       </div>
     );
