@@ -20,7 +20,6 @@ const navbarStyles = theme => ({
     flexGrow: 1,
     fontFamily: "Roboto,Arial,sans-serif",
     letterSpacing: "0"
-    // maxWidth: "1248px"
   },
   button: {
     padding: theme.spacing(1.5),
@@ -29,14 +28,17 @@ const navbarStyles = theme => ({
     fontSize: theme.spacing(2.5),
     color: "white"
   },
-  space: {
+  flipkart: {
     height: "100%",
-    minWidth: "124px"
+    marginLeft: theme.spacing(15.5)
   },
   searchInput: {
     backgroundColor: "white",
-    margin: "0 auto 0 12px",
+    margin: "0 30px 0 12px",
     width: "50%"
+  },
+  login: {
+    color: "white"
   }
 });
 
@@ -50,11 +52,38 @@ class _Navbar extends Component {
   };
   render() {
     const { classes } = this.props;
+    let authorized;
+    if (typeof window !== "undefined" && localStorage.getItem("secret")) {
+      authorized = (
+        <div>
+          <Link href="/account">
+            <Button color="inherit">USER</Button>
+          </Link>
+          <Link href="/viewcart">
+            <Button color="inherit">CART</Button>
+          </Link>
+          <Link href="/orders">
+            <Button color="inherit">ORDERS</Button>
+          </Link>
+          <Button color="inherit" onClick={this.onSignout}>
+            SIGNOUT
+          </Button>
+        </div>
+      );
+    } else {
+      authorized = (
+        <div>
+          <Link href="/login">
+            <Button className={classes.login}>login</Button>
+          </Link>
+        </div>
+      );
+    }
+
     return (
       <div className={classes.root}>
         <AppBar position="static">
           <Toolbar>
-            <div className={classes.space}></div>
             <Link href="/products">
               <img className={classes.flipkart} src="/static/logo.png" />
             </Link>
@@ -65,23 +94,7 @@ class _Navbar extends Component {
               className={classes.searchInput}
               placeholder="Search products"
             />
-            <Link href="/account">
-              <Button color="inherit">USER</Button>
-            </Link>
-            <Link href="/viewcart">
-              <Button color="inherit">CART</Button>
-            </Link>
-            <Link href="/orders">
-              <Button color="inherit">ORDERS</Button>
-            </Link>
-            <Button
-              // className={classes.button}
-              color="inherit"
-              onClick={this.onSignout}
-            >
-              SIGNOUT
-            </Button>
-            <div className={classes.space}></div>
+            {authorized}
           </Toolbar>
         </AppBar>
       </div>
