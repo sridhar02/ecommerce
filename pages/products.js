@@ -46,6 +46,16 @@ class _Product extends Component {
   };
 
   render() {
+    // FIXME ssr html does not match intial react render on browser if user is logged in
+    let addCart;
+    if (typeof window !== "undefined" && localStorage.getItem("secret")) {
+      addCart = (
+        <Button variant="contained" color="primary" onClick={this.handleCart}>
+          Add to Cart
+        </Button>
+      );
+    }
+
     const { classes, product } = this.props;
     return (
       <div className={classes.product}>
@@ -58,9 +68,7 @@ class _Product extends Component {
         <Typography variant="body2" className={classes.name}>
           ₹{product.price}
         </Typography>
-        <Button variant="contained" color="primary" onClick={this.handleCart}>
-          Add to Cart
-        </Button>
+        {addCart}
       </div>
     );
   }
