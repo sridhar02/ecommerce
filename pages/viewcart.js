@@ -249,6 +249,11 @@ class _Cart extends Component {
     if (this.state.cartProducts.length === 0) {
       return <EmptyCart />;
     }
+    let sum = 0;
+    let numberOfProducts = this.state.cartProducts.length;
+    for (let i = 0; i < numberOfProducts; i++) {
+      sum += this.state.cartProducts[i].price;
+    }
     return (
       <Fragment>
         <Navbar />
@@ -272,6 +277,10 @@ class _Cart extends Component {
           </div>
           <div className={classes.sideSection}>
             <Typography variant="h6">PRICE DETAILS</Typography>
+            <Typography>
+              {" "}
+              Price({numberOfProducts}):{sum}
+            </Typography>
           </div>
         </div>
       </Fragment>
