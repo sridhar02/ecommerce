@@ -95,7 +95,6 @@ func getOrdersHandler(c *gin.Context, db *sql.DB) {
 	rows, err := db.Query(`SELECT id,created_at FROM orders WHERE user_id=$1`, userId)
 	if err != nil {
 		fmt.Println(err)
-		fmt.Println("error from here")
 		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
@@ -103,12 +102,10 @@ func getOrdersHandler(c *gin.Context, db *sql.DB) {
 	var Id int
 	var createdAt time.Time
 	orderResponses := []OrderResponse{}
-	fmt.Println("error from here")
 	for rows.Next() {
 		err = rows.Scan(&Id, &createdAt)
 		if err != nil {
 			fmt.Println(err)
-			fmt.Println("error from here")
 			c.AbortWithStatus(http.StatusInternalServerError)
 			return
 		}
@@ -125,7 +122,6 @@ func getOrdersHandler(c *gin.Context, db *sql.DB) {
 			orderResponse.ID)
 		if err != nil {
 			fmt.Println(err)
-			fmt.Println("error from here")
 			c.AbortWithStatus(http.StatusInternalServerError)
 			return
 		}
@@ -137,7 +133,6 @@ func getOrdersHandler(c *gin.Context, db *sql.DB) {
 			err = rows.Scan(&id, &name, &image, &price, &quantity)
 			if err != nil {
 				fmt.Println(err)
-				fmt.Println("error from here")
 				c.AbortWithStatus(http.StatusInternalServerError)
 				return
 			}
