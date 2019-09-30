@@ -1,0 +1,1 @@
+ALTER TABLE order_products ADD COLUMN quantity INTEGER;

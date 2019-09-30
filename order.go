@@ -8,6 +8,11 @@ import (
 	"time"
 )
 
+type ProductQuantity struct {
+	ProductId int `json:"product_id"`
+	Quantity  int `json:"quantity"`
+}
+
 func postOrderHandler(c *gin.Context, db *sql.DB) {
 
 	userId, err := authorization(c, db)
@@ -23,30 +28,34 @@ func postOrderHandler(c *gin.Context, db *sql.DB) {
 		return
 	}
 
-	rows, err := db.Query(`SELECT product_id FROM cart WHERE user_id = $1`, userId)
+	rows, err := db.Query(`SELECT product_id,quantity FROM cart WHERE user_id = $1`, userId)
 	if err != nil {
 		fmt.Println(err)
 		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 
-	var productId int
-	productIds := []int{}
+	var productId, quantity int
+	productQuantitys := []ProductQuantity{}
 
 	for rows.Next() {
-		err = rows.Scan(&productId)
+		err = rows.Scan(&productId, &quantity)
 		if err != nil {
 			fmt.Println(err)
 			c.AbortWithStatus(http.StatusInternalServerError)
 			return
 		}
-		productIds = append(productIds, productId)
+		productQuantity := ProductQuantity{
+			ProductId: productId,
+			Quantity:  quantity,
+		}
+		productQuantitys = append(productQuantitys, productQuantity)
 	}
 
-	for _, productId := range productIds {
+	for _, productQuantity := range productQuantitys {
 
-		_, err = db.Exec(`INSERT INTO order_products(order_id,product_id)VALUES($1,$2)`,
-			orderId, productId)
+		_, err = db.Exec(`INSERT INTO order_products(order_id,product_id,quantity)VALUES($1,$2,$3)`,
+			orderId, productQuantity.ProductId, productQuantity.Quantity)
 		if err != nil {
 			fmt.Println(err)
 			c.AbortWithStatus(http.StatusInternalServerError)
@@ -63,9 +72,17 @@ func postOrderHandler(c *gin.Context, db *sql.DB) {
 }
 
 type OrderResponse struct {
-	ID        int       `json:"id,omitempty"`
-	CreatedAt time.Time `json:"created_at,omitempty"`
-	Products  []Product `json:"products"`
+	ID            int            `json:"id,omitempty"`
+	CreatedAt     time.Time      `json:"created_at,omitempty"`
+	OrderProducts []OrderProduct `json:"products"`
+}
+
+type OrderProduct struct {
+	Id       int    `json:"id,omitempty"`
+	Name     string `json:"name,omitempty"`
+	Image    string `json:"image,omitempty"`
+	Price    int    `json:"price,omitempty"`
+	Quantity int    `json:"quantity,omitempty"`
 }
 
 func getOrdersHandler(c *gin.Context, db *sql.DB) {
@@ -74,10 +91,11 @@ func getOrdersHandler(c *gin.Context, db *sql.DB) {
 	if err != nil {
 		return
 	}
-
+	fmt.Println("error from here")
 	rows, err := db.Query(`SELECT id,created_at FROM orders WHERE user_id=$1`, userId)
 	if err != nil {
 		fmt.Println(err)
+		fmt.Println("error from here")
 		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
@@ -85,10 +103,12 @@ func getOrdersHandler(c *gin.Context, db *sql.DB) {
 	var Id int
 	var createdAt time.Time
 	orderResponses := []OrderResponse{}
+	fmt.Println("error from here")
 	for rows.Next() {
 		err = rows.Scan(&Id, &createdAt)
 		if err != nil {
 			fmt.Println(err)
+			fmt.Println("error from here")
 			c.AbortWithStatus(http.StatusInternalServerError)
 			return
 		}
@@ -98,36 +118,40 @@ func getOrdersHandler(c *gin.Context, db *sql.DB) {
 		}
 		orderResponses = append(orderResponses, orderResponse)
 	}
-
 	for i, orderResponse := range orderResponses {
-		rows, err := db.Query(`SELECT products.id,products.name,products.image,products.price FROM order_products JOIN 
-							   products ON order_products.product_id= products.id WHERE order_id =$1`,
+		rows, err := db.Query(`SELECT products.id,products.name,products.image,products.price,
+								order_products.quantity FROM order_products JOIN products ON 
+								order_products.product_id= products.id WHERE order_id =$1`,
 			orderResponse.ID)
 		if err != nil {
 			fmt.Println(err)
+			fmt.Println("error from here")
 			c.AbortWithStatus(http.StatusInternalServerError)
 			return
 		}
 
-		products := []Product{}
+		orderProducts := []OrderProduct{}
 		for rows.Next() {
-			var id, price int
+			var id, price, quantity int
 			var name, image string
-			err = rows.Scan(&id, &name, &image, &price)
+			err = rows.Scan(&id, &name, &image, &price, &quantity)
 			if err != nil {
 				fmt.Println(err)
+				fmt.Println("error from here")
 				c.AbortWithStatus(http.StatusInternalServerError)
 				return
 			}
-			product := Product{
-				Id:    id,
-				Name:  name,
-				Image: image,
-				Price: price,
+
+			orderProduct := OrderProduct{
+				Id:       id,
+				Name:     name,
+				Image:    image,
+				Price:    price,
+				Quantity: quantity,
 			}
-			products = append(products, product)
+			orderProducts = append(orderProducts, orderProduct)
 		}
-		orderResponses[i].Products = products
+		orderResponses[i].OrderProducts = orderProducts
 	}
 
 	c.JSON(http.StatusOK, orderResponses)
