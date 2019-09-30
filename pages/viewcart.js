@@ -114,17 +114,20 @@ class _Product extends Component {
       })
     }).then(response => {
       if (response.status === 204) {
+        this.props.fetchCart();
       }
     });
   };
 
   handleDecrement = event => {
     if (this.state.quantity === 1) {
-    } else {
-      this.setState({
-        quantity: this.state.quantity - 1
-      });
+      return;
     }
+
+    this.setState({
+      quantity: this.state.quantity - 1
+    });
+
     fetch(`${process.env.API_URL}/cart`, {
       method: "PUT",
       headers: {
@@ -138,12 +141,14 @@ class _Product extends Component {
       })
     }).then(response => {
       if (response.status === 204) {
+        this.props.fetchCart();
       }
     });
   };
 
   render() {
     const { classes, cartProduct } = this.props;
+    const { quantity } = this.state;
     return (
       <div>
         <div className={classes.productView}>
@@ -156,7 +161,7 @@ class _Product extends Component {
           </div>
         </div>
         <div className={classes.icons}>
-          <IconButton onClick={this.handleDecrement}>
+          <IconButton onClick={this.handleDecrement} disabled={quantity === 1}>
             <RemoveIcon />
           </IconButton>
           <span className={classes.textField}>{this.state.quantity}</span>
@@ -234,6 +239,10 @@ class _Cart extends Component {
   }
 
   componentDidMount() {
+    this.fetchCart();
+  }
+
+  fetchCart = () => {
     fetch(`${process.env.API_URL}/cart`, {
       method: "GET",
       headers: {
@@ -248,7 +257,7 @@ class _Cart extends Component {
           cartProducts: cartProducts
         });
       });
-  }
+  };
 
   handleOrder = event => {
     event.preventDefault();
@@ -275,7 +284,7 @@ class _Cart extends Component {
     let sum = 0;
     let numberOfProducts = cartProducts.length;
     for (let i = 0; i < numberOfProducts; i++) {
-      sum += this.state.cartProducts[i].price;
+      sum += cartProducts[i].price * cartProducts[i].quantity;
     }
     return (
       <Fragment>
@@ -285,7 +294,11 @@ class _Cart extends Component {
             <Typography className={classes.mycart}>My Cart</Typography>
             <div>
               {cartProducts.map(cartProduct => (
-                <Product cartProduct={cartProduct} key={cartProduct.id} />
+                <Product
+                  cartProduct={cartProduct}
+                  key={cartProduct.id}
+                  fetchCart={this.fetchCart}
+                />
               ))}
             </div>
             <div className={classes.placeOrder}>
