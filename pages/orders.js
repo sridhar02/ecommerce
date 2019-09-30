@@ -64,6 +64,10 @@ const orderstyles = theme => ({
   }
 });
 function _Order({ classes, order }) {
+  let sum = 0;
+  for (let product of order.products) {
+    sum += product.price * product.quantity;
+  }
   return (
     <div className={classes.productSection}>
       <div className={classes.orderDetails}>
@@ -73,6 +77,7 @@ function _Order({ classes, order }) {
       {order.products.map(product => (
         <Product product={product} key={product.id} />
       ))}
+      <Typography variant="h6"> Order Total :{sum}</Typography>
     </div>
   );
 }
