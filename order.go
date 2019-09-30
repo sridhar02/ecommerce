@@ -91,7 +91,6 @@ func getOrdersHandler(c *gin.Context, db *sql.DB) {
 	if err != nil {
 		return
 	}
-	fmt.Println("error from here")
 	rows, err := db.Query(`SELECT id,created_at FROM orders WHERE user_id=$1`, userId)
 	if err != nil {
 		fmt.Println(err)
