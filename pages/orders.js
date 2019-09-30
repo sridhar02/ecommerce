@@ -42,6 +42,7 @@ function _Product({ classes, product }) {
           {product.name}
         </Typography>
         <Typography variant="body2">₹{product.price}</Typography>
+        <Typography variant="body2">Quantity:{product.quantity}</Typography>
       </div>
     </div>
   );
