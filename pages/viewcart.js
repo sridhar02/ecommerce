@@ -195,11 +195,33 @@ const cartStyles = theme => ({
     margin: "20px auto",
     marginRight: "60px",
     backgroundColor: "white",
-    alignItems: "center"
+    alignItems: "center",
+    height: "200px"
   },
   section: {
     display: "flex",
     backgroundColor: "#eceff1"
+  },
+  price: {
+    display: "flex",
+    padding: theme.spacing(1),
+    justifyContent: "space-between"
+  },
+  priceDetails: {
+    textAlign: "center",
+    padding: theme.spacing(1),
+    borderBottom: "1px solid #eceff1"
+  },
+  delivery: {
+    display: "flex",
+    padding: theme.spacing(1),
+    justifyContent: "space-between",
+    borderBottom: "1px solid #eceff1"
+  },
+  total: {
+    display: "flex",
+    padding: theme.spacing(1),
+    justifyContent: "space-between"
   }
 });
 
@@ -245,12 +267,13 @@ class _Cart extends Component {
   };
 
   render() {
-    const { classes, cartProducts } = this.props;
-    if (this.state.cartProducts.length === 0) {
+    const { classes } = this.props;
+    const { cartProducts } = this.state;
+    if (cartProducts.length === 0) {
       return <EmptyCart />;
     }
     let sum = 0;
-    let numberOfProducts = this.state.cartProducts.length;
+    let numberOfProducts = cartProducts.length;
     for (let i = 0; i < numberOfProducts; i++) {
       sum += this.state.cartProducts[i].price;
     }
@@ -261,7 +284,7 @@ class _Cart extends Component {
           <div className={classes.mainSection}>
             <Typography className={classes.mycart}>My Cart</Typography>
             <div>
-              {this.state.cartProducts.map(cartProduct => (
+              {cartProducts.map(cartProduct => (
                 <Product cartProduct={cartProduct} key={cartProduct.id} />
               ))}
             </div>
@@ -276,11 +299,21 @@ class _Cart extends Component {
             </div>
           </div>
           <div className={classes.sideSection}>
-            <Typography variant="h6">PRICE DETAILS</Typography>
-            <Typography>
-              {" "}
-              Price({numberOfProducts}):{sum}
+            <Typography variant="h6" className={classes.priceDetails}>
+              PRICE DETAILS
             </Typography>
+            <div className={classes.price}>
+              <div>Price ({numberOfProducts} items):</div>
+              <div>{sum}</div>
+            </div>
+            <div className={classes.delivery}>
+              <div>Delivery :</div>
+              <div>Free</div>
+            </div>
+            <div className={classes.total}>
+              <div>Total Payable:</div>
+              <div>{sum}</div>
+            </div>
           </div>
         </div>
       </Fragment>
