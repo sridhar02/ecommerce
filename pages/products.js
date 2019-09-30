@@ -7,6 +7,8 @@ import { withStyles } from "@material-ui/core/styles";
 
 import { Button, Typography } from "@material-ui/core";
 
+import Link from "next/link";
+
 const productStyles = theme => ({
   name: {
     marginTop: theme.spacing(0.5),
@@ -26,6 +28,13 @@ const productStyles = theme => ({
 });
 
 class _Product extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      productAlreadyAdded: false
+    };
+  }
+
   handleCart = event => {
     const { product } = this.props;
     event.preventDefault();
@@ -47,12 +56,25 @@ class _Product extends Component {
 
   render() {
     // FIXME ssr html does not match intial react render on browser if user is logged in
+    const { productAlreadyAdded } = this.state;
     let addCart;
-    if (typeof window !== "undefined" && localStorage.getItem("secret")) {
+    if (
+      typeof window !== "undefined" &&
+      localStorage.getItem("secret") &&
+      !productAlreadyAdded
+    ) {
       addCart = (
         <Button variant="contained" color="primary" onClick={this.handleCart}>
           Add to Cart
         </Button>
+      );
+    } else {
+      addCart = (
+        <Link href="/viewcart">
+          <Button color="primary" variant="contained">
+            GO TO CART
+          </Button>
+        </Link>
       );
     }
 
@@ -99,6 +121,10 @@ class _Products extends Component {
   }
 
   componentDidMount() {
+    this.fetchCart();
+  }
+
+  fetchCart = () => {
     fetch(`${process.env.API_URL}/products`)
       .then(res => res.json())
       .then(products => {
@@ -106,16 +132,20 @@ class _Products extends Component {
           products: products
         });
       });
-  }
-
+  };
   render() {
     const { classes } = this.props;
+    const { fetchCart } = this.state;
     return (
       <Fragment>
         <Navbar />
         <div className={classes.section}>
           {this.state.products.map(product => (
-            <Product product={product} key={product.id} />
+            <Product
+              product={product}
+              key={product.id}
+              fetchCart={this.fetchCart}
+            />
           ))}
         </div>
       </Fragment>
