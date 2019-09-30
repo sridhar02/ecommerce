@@ -30,9 +30,6 @@ const productStyles = theme => ({
 class _Product extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      productAlreadyAdded: false
-    };
   }
 
   handleCart = event => {
@@ -56,19 +53,9 @@ class _Product extends Component {
 
   render() {
     // FIXME ssr html does not match intial react render on browser if user is logged in
-    const { productAlreadyAdded } = this.state;
     let addCart;
-    if (
-      typeof window !== "undefined" &&
-      localStorage.getItem("secret") &&
-      !productAlreadyAdded
-    ) {
-      addCart = (
-        <Button variant="contained" color="primary" onClick={this.handleCart}>
-          Add to Cart
-        </Button>
-      );
-    } else {
+    const { classes, product, cartProducts } = this.props;
+    if (cartProducts.some(cartProduct => product.id === cartProduct.id)) {
       addCart = (
         <Link href="/viewcart">
           <Button color="primary" variant="contained">
@@ -76,9 +63,17 @@ class _Product extends Component {
           </Button>
         </Link>
       );
+    } else if (
+      typeof window !== "undefined" &&
+      localStorage.getItem("secret")
+    ) {
+      addCart = (
+        <Button variant="contained" color="primary" onClick={this.handleCart}>
+          Add to Cart
+        </Button>
+      );
     }
 
-    const { classes, product } = this.props;
     return (
       <div className={classes.product}>
         <div>
@@ -116,15 +111,12 @@ class _Products extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      products: props.products || []
+      products: props.products || [],
+      cartProducts: props.cartProducts || []
     };
   }
 
   componentDidMount() {
-    this.fetchCart();
-  }
-
-  fetchCart = () => {
     fetch(`${process.env.API_URL}/products`)
       .then(res => res.json())
       .then(products => {
@@ -132,10 +124,24 @@ class _Products extends Component {
           products: products
         });
       });
-  };
+    fetch(`${process.env.API_URL}/cart`, {
+      method: "GET",
+      headers: {
+        Accept: "applicaton/json",
+        "Content-type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("secret")}`
+      }
+    })
+      .then(response => response.json())
+      .then(cartProducts => {
+        this.setState({
+          cartProducts: cartProducts
+        });
+      });
+  }
   render() {
     const { classes } = this.props;
-    const { fetchCart } = this.state;
+    const { cartProducts } = this.state;
     return (
       <Fragment>
         <Navbar />
@@ -144,7 +150,7 @@ class _Products extends Component {
             <Product
               product={product}
               key={product.id}
-              fetchCart={this.fetchCart}
+              cartProducts={cartProducts}
             />
           ))}
         </div>
