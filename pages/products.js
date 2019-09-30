@@ -49,6 +49,7 @@ class _Product extends Component {
       if (response.status === 201) {
       }
     });
+    this.props.fetchProducts();
   };
 
   render() {
@@ -117,13 +118,7 @@ class _Products extends Component {
   }
 
   componentDidMount() {
-    fetch(`${process.env.API_URL}/products`)
-      .then(res => res.json())
-      .then(products => {
-        this.setState({
-          products: products
-        });
-      });
+    this.fetchProducts();
     fetch(`${process.env.API_URL}/cart`, {
       method: "GET",
       headers: {
@@ -139,6 +134,15 @@ class _Products extends Component {
         });
       });
   }
+  fetchProducts = () => {
+    fetch(`${process.env.API_URL}/products`)
+      .then(res => res.json())
+      .then(products => {
+        this.setState({
+          products: products
+        });
+      });
+  };
   render() {
     const { classes } = this.props;
     const { cartProducts } = this.state;
@@ -151,6 +155,7 @@ class _Products extends Component {
               product={product}
               key={product.id}
               cartProducts={cartProducts}
+              fetchProducts={this.fetchProducts}
             />
           ))}
         </div>
