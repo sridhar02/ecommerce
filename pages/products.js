@@ -125,7 +125,10 @@ class _Products extends Component {
           this.setState({ products });
         }
       });
-    this.fetchCart();
+
+    if (localStorage.getItem("secret")) {
+      this.fetchCart();
+    }
   }
   fetchCart = () => {
     fetch(`${process.env.API_URL}/cart`, {
