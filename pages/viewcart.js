@@ -283,8 +283,8 @@ class _Cart extends Component {
     }
     let sum = 0;
     let numberOfProducts = cartProducts.length;
-    for (let i = 0; i < numberOfProducts; i++) {
-      sum += cartProducts[i].price * cartProducts[i].quantity;
+    for (let cartProduct of cartProducts) {
+      sum += cartProduct.price * cartProduct.quantity;
     }
     return (
       <Fragment>
