@@ -115,7 +115,11 @@ class _Products extends Component {
 
   componentDidMount() {
     fetch(`${process.env.API_URL}/products`)
-      .then(res => res.json())
+      .then(response => {
+        if (response.status === 200) {
+          return response.json();
+        }
+      })
       .then(products => {
         this.setState({
           products: products
@@ -132,7 +136,11 @@ class _Products extends Component {
         Authorization: `Bearer ${localStorage.getItem("secret")}`
       }
     })
-      .then(response => response.json())
+      .then(response => {
+        if (response.status === 200) {
+          return response.json();
+        }
+      })
       .then(cartProducts => {
         this.setState({
           cartProducts: cartProducts

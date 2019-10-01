@@ -281,7 +281,11 @@ class _Cart extends Component {
         Authorization: `Bearer ${localStorage.getItem("secret")}`
       }
     })
-      .then(res => res.json())
+      .then(response => {
+        if (response.status === 200) {
+          return response.json();
+        }
+      })
       .then(cartProducts => {
         this.setState({
           cartProducts: cartProducts
