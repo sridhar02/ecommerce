@@ -93,7 +93,7 @@ class _Product extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      quantity: props.cartProduct.quantity
+      quantity: props.product.quantity
     };
   }
 
@@ -109,7 +109,7 @@ class _Product extends Component {
         Authorization: `Bearer ${localStorage.getItem("secret")}`
       },
       body: JSON.stringify({
-        product_id: this.props.cartProduct.id,
+        product_id: this.props.product.id,
         quantity: this.state.quantity + 1
       })
     }).then(response => {
@@ -136,7 +136,7 @@ class _Product extends Component {
         Authorization: `Bearer ${localStorage.getItem("secret")}`
       },
       body: JSON.stringify({
-        product_id: this.props.cartProduct.id,
+        product_id: this.props.product.id,
         quantity: this.state.quantity - 1
       })
     }).then(response => {
@@ -147,17 +147,17 @@ class _Product extends Component {
   };
 
   render() {
-    const { classes, cartProduct } = this.props;
+    const { classes, product } = this.props;
     const { quantity } = this.state;
     return (
       <div>
         <div className={classes.productView}>
           <div>
-            <img src={cartProduct.image} className={classes.image} />
+            <img src={product.image} className={classes.image} />
           </div>
           <div className={classes.productDetails}>
-            <Typography>{cartProduct.name}</Typography>
-            <Typography variant="body2">₹{cartProduct.price} </Typography>
+            <Typography>{product.name}</Typography>
+            <Typography variant="body2">₹{product.price} </Typography>
           </div>
         </div>
         <div className={classes.icons}>
@@ -235,14 +235,14 @@ const priceStyles = theme => ({
 
 class _Price extends Component {
   render() {
-    const { classes, cartProducts, sum } = this.props;
+    const { classes, products, sum } = this.props;
     return (
       <div>
         <Typography variant="h6" className={classes.priceDetails}>
           PRICE DETAILS
         </Typography>
         <div className={classes.price}>
-          <div>Price ({cartProducts.length} items):</div>
+          <div>Price ({products.length} items):</div>
           <div>{sum}</div>
         </div>
         <div className={classes.delivery}>
@@ -264,7 +264,7 @@ class _Cart extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      cartProducts: props.cartProducts || []
+      products: props.products || []
     };
   }
 
@@ -286,9 +286,9 @@ class _Cart extends Component {
           return response.json();
         }
       })
-      .then(cartProducts => {
+      .then(Products => {
         this.setState({
-          cartProducts: cartProducts
+          products: Products
         });
       });
   };
@@ -311,13 +311,13 @@ class _Cart extends Component {
 
   render() {
     const { classes } = this.props;
-    const { cartProducts } = this.state;
-    if (cartProducts.length === 0) {
+    const { products } = this.state;
+    if (products.length === 0) {
       return <EmptyCart />;
     }
     let sum = 0;
-    for (let cartProduct of cartProducts) {
-      sum += cartProduct.price * cartProduct.quantity;
+    for (let product of products) {
+      sum += product.price * product.quantity;
     }
     return (
       <Fragment>
@@ -326,10 +326,10 @@ class _Cart extends Component {
           <div className={classes.mainSection}>
             <Typography className={classes.mycart}>My Cart</Typography>
             <div>
-              {cartProducts.map(cartProduct => (
+              {products.map(product => (
                 <Product
-                  cartProduct={cartProduct}
-                  key={cartProduct.id}
+                  product={product}
+                  key={Product.id}
                   fetchCart={this.fetchCart}
                 />
               ))}
@@ -345,7 +345,7 @@ class _Cart extends Component {
             </div>
           </div>
           <div className={classes.sideSection}>
-            <Price cartProducts={cartProducts} sum={sum} />
+            <Price products={products} sum={sum} />
           </div>
         </div>
       </Fragment>
