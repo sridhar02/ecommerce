@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from "react";
 
-import { Navbar } from "../src/utils";
+import { Navbar, authHeaders } from "../src/utils";
 
 import Link from "next/link";
 
@@ -17,6 +17,8 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import FormControl from "@material-ui/core/FormControl";
 
 import FormLabel from "@material-ui/core/FormLabel";
+
+import axios from "axios";
 
 const personalInformationStyles = theme => ({
   alignment: {
@@ -63,24 +65,23 @@ class _PersonalInformation extends Component {
 
   handleSubmit = event => {
     event.preventDefault();
-    fetch(`${process.env.API_URL}/user`, {
-      method: "PUT",
-      headers: {
-        Accept: "applicaton/json",
-        "Content-type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("secret")}`
-      },
-      body: JSON.stringify({
-        name: this.state.name,
-        sex: this.state.sex
-      })
-    }).then(response => {
-      if (response.status === 204) {
+    axios
+      .put(
+        "/user",
+        {
+          name: this.state.name,
+          sex: this.state.sex
+        },
+        authHeaders()
+      )
+      .then(() =>
         this.setState({
           disabled: true
-        });
-      }
-    });
+        })
+      )
+      .catch(error => {
+        console.log(error);
+      });
   };
 
   handleEdit = () => {
@@ -208,23 +209,22 @@ class _Email extends Component {
 
   handleSubmit = event => {
     event.preventDefault();
-    fetch(`${process.env.API_URL}/user`, {
-      method: "PUT",
-      headers: {
-        Accept: "applicaton/json",
-        "Content-type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("secret")}`
-      },
-      body: JSON.stringify({
-        email: this.state.email
-      })
-    }).then(response => {
-      if (response.status === 204) {
+    axios
+      .put(
+        "/user",
+        {
+          email: this.state.email
+        },
+        authHeaders()
+      )
+      .then(() =>
         this.setState({
           disabled: true
-        });
-      }
-    });
+        })
+      )
+      .catch(error => {
+        console.log(error);
+      });
   };
 
   handleEdit = () => {
@@ -331,23 +331,22 @@ class _Phonenumber extends Component {
 
   handleSubmit = event => {
     event.preventDefault();
-    fetch("http://localhost:8000/user", {
-      method: "PUT",
-      headers: {
-        Accept: "applicaton/json",
-        "Content-type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("secret")}`
-      },
-      body: JSON.stringify({
-        phonenumber: this.state.phonenumber
-      })
-    }).then(response => {
-      if (response.status === 204) {
+    axios
+      .put(
+        "http://localhost:8000/user",
+        {
+          phonenumber: this.state.phonenumber
+        },
+        authHeaders()
+      )
+      .then(() =>
         this.setState({
           disabled: true
-        });
-      }
-    });
+        })
+      )
+      .catch(error => {
+        console.log(error);
+      });
   };
 
   handleEdit = () => {

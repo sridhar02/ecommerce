@@ -6,6 +6,10 @@ import { ThemeProvider } from "@material-ui/styles";
 import { createMuiTheme } from "@material-ui/core/styles";
 import blue from "@material-ui/core/colors/blue";
 
+import axios from "axios";
+
+axios.defaults.baseURL = process.env.API_URL;
+
 export const theme = createMuiTheme({
   palette: {
     primary: {

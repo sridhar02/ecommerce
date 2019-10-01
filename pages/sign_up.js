@@ -8,6 +8,8 @@ import Link from "next/link";
 
 import { Button, TextField, Typography } from "@material-ui/core";
 
+import axios from "axios";
+
 const signupStyles = theme => ({
   signupSidebar: {
     display: "flex",
@@ -102,23 +104,17 @@ class _Signup extends Component {
 
   handleSubmit = event => {
     event.preventDefault();
-    fetch(`${process.env.API_URL}/user/signup`, {
-      method: "POST",
-      headers: {
-        Accept: "applicaton/json",
-        "Content-type": "application/json"
-      },
-      body: JSON.stringify({
+    axios
+      .post("/user/signup", {
         username: this.state.username,
         email: this.state.email,
         phonenumber: this.state.phonenumber,
         password: this.state.password
       })
-    }).then(response => {
-      if (response.status === 201) {
-        Router.push("/login");
-      }
-    });
+      .then(response => Router.push("/login"))
+      .catch(error => {
+        console.log(error);
+      });
   };
 
   render() {

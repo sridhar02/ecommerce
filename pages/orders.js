@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from "react";
 
-import { Navbar } from "../src/utils";
+import { Navbar, authHeaders } from "../src/utils";
 
 import Link from "next/link";
 
@@ -9,6 +9,8 @@ import Router, { withRouter } from "next/router";
 import { withStyles } from "@material-ui/core/styles";
 
 import { Button, TextField, Typography } from "@material-ui/core";
+
+import axios from "axios";
 
 const productStyles = theme => ({
   name: {
@@ -106,25 +108,15 @@ class _Orders extends Component {
     };
   }
   componentDidMount() {
-    fetch(`${process.env.API_URL}/orders`, {
-      method: "GET",
-      headers: {
-        Accept: "applicaton/json",
-        "Content-type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("secret")}`
-      }
-    })
-      .then(response => {
-        if (response.status === 200) {
-          return response.json();
-        } else if (response.status === 401) {
-          return Router.push("/login");
-        }
-      })
-      .then(orders => {
+    axios
+      .get("/orders", authHeaders())
+      .then(response =>
         this.setState({
-          orders: orders
-        });
+          orders: response.data
+        })
+      )
+      .catch(error => {
+        Router.push("/login");
       });
   }
   render() {
