@@ -206,7 +206,10 @@ const cartStyles = theme => ({
   section: {
     display: "flex",
     backgroundColor: "#eceff1"
-  },
+  }
+});
+
+const priceStyles = theme => ({
   price: {
     display: "flex",
     padding: theme.spacing(1),
@@ -229,6 +232,33 @@ const cartStyles = theme => ({
     justifyContent: "space-between"
   }
 });
+
+class _Price extends Component {
+  render() {
+    const { classes, cartProducts, sum } = this.props;
+    return (
+      <div>
+        <Typography variant="h6" className={classes.priceDetails}>
+          PRICE DETAILS
+        </Typography>
+        <div className={classes.price}>
+          <div>Price ({cartProducts.length} items):</div>
+          <div>{sum}</div>
+        </div>
+        <div className={classes.delivery}>
+          <div>Delivery :</div>
+          <div>Free</div>
+        </div>
+        <div className={classes.total}>
+          <div>Total Payable:</div>
+          <div>{sum}</div>
+        </div>
+      </div>
+    );
+  }
+}
+
+const Price = withStyles(priceStyles)(_Price);
 
 class _Cart extends Component {
   constructor(props) {
@@ -282,7 +312,6 @@ class _Cart extends Component {
       return <EmptyCart />;
     }
     let sum = 0;
-    let numberOfProducts = cartProducts.length;
     for (let cartProduct of cartProducts) {
       sum += cartProduct.price * cartProduct.quantity;
     }
@@ -312,21 +341,7 @@ class _Cart extends Component {
             </div>
           </div>
           <div className={classes.sideSection}>
-            <Typography variant="h6" className={classes.priceDetails}>
-              PRICE DETAILS
-            </Typography>
-            <div className={classes.price}>
-              <div>Price ({numberOfProducts} items):</div>
-              <div>{sum}</div>
-            </div>
-            <div className={classes.delivery}>
-              <div>Delivery :</div>
-              <div>Free</div>
-            </div>
-            <div className={classes.total}>
-              <div>Total Payable:</div>
-              <div>{sum}</div>
-            </div>
+            <Price cartProducts={cartProducts} sum={sum} />
           </div>
         </div>
       </Fragment>
