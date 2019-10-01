@@ -121,9 +121,9 @@ class _Products extends Component {
         }
       })
       .then(products => {
-        this.setState({
-          products: products
-        });
+        if (products) {
+          this.setState({ products });
+        }
       });
     this.fetchCart();
   }
@@ -142,9 +142,9 @@ class _Products extends Component {
         }
       })
       .then(cartProducts => {
-        this.setState({
-          cartProducts: cartProducts
-        });
+        if (cartProducts) {
+          this.setState({ cartProducts });
+        }
       });
   };
   render() {
