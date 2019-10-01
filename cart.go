@@ -67,7 +67,8 @@ func getCartHandler(c *gin.Context, db *sql.DB) {
 	}
 
 	rows, err := db.Query(`SELECT products.id,products.name,products.image,products.price,cart.quantity FROM 
-		                 products JOIN cart ON cart.product_id = products.id WHERE cart.user_id =  $1`, userId)
+		                 products JOIN cart ON cart.product_id = products.id WHERE cart.user_id =  $1 
+		                 ORDER BY products.id ASC`, userId)
 	if err != nil {
 		fmt.Println(err)
 		c.AbortWithStatus(http.StatusInternalServerError)
