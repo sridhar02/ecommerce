@@ -28,10 +28,6 @@ const productStyles = theme => ({
 });
 
 class _Product extends Component {
-  constructor(props) {
-    super(props);
-  }
-
   handleCart = event => {
     const { product } = this.props;
     event.preventDefault();
@@ -145,12 +141,12 @@ class _Products extends Component {
   };
   render() {
     const { classes } = this.props;
-    const { cartProducts } = this.state;
+    const { cartProducts, products } = this.state;
     return (
       <Fragment>
         <Navbar />
         <div className={classes.section}>
-          {this.state.products.map(product => (
+          {products.map(product => (
             <Product
               product={product}
               key={product.id}
