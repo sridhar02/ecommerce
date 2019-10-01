@@ -77,7 +77,7 @@ function _Order({ classes, order }) {
       {order.products.map(product => (
         <Product product={product} key={product.id} />
       ))}
-      <Typography variant="h6"> Order Total :{sum}</Typography>
+      <Typography variant="h6"> Order Total :₹{sum}</Typography>
     </div>
   );
 }
