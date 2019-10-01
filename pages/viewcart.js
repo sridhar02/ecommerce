@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from "react";
 
-import { Navbar } from "../src/utils";
+import { Navbar, authHeaders } from "../src/utils";
 
 import Link from "next/link";
 
@@ -15,6 +15,8 @@ import AddIcon from "@material-ui/icons/Add";
 import RemoveIcon from "@material-ui/icons/Remove";
 
 import { Button, TextField, Typography } from "@material-ui/core";
+
+import axios from "axios";
 
 const emptyCartStyles = theme => ({
   image: {
@@ -101,22 +103,19 @@ class _Product extends Component {
     this.setState({
       quantity: this.state.quantity + 1
     });
-    fetch(`${process.env.API_URL}/cart`, {
-      method: "PUT",
-      headers: {
-        Accept: "applicaton/json",
-        "Content-type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("secret")}`
-      },
-      body: JSON.stringify({
-        product_id: this.props.product.id,
-        quantity: this.state.quantity + 1
-      })
-    }).then(response => {
-      if (response.status === 204) {
-        this.props.fetchCart();
-      }
-    });
+    axios
+      .put(
+        "/cart",
+        {
+          product_id: this.props.product.id,
+          quantity: this.state.quantity + 1
+        },
+        authHeaders()
+      )
+      .then(() => this.props.fetchCart())
+      .catch(error => {
+        console.log(error);
+      });
   };
 
   handleDecrement = event => {
@@ -128,22 +127,16 @@ class _Product extends Component {
       quantity: this.state.quantity - 1
     });
 
-    fetch(`${process.env.API_URL}/cart`, {
-      method: "PUT",
-      headers: {
-        Accept: "applicaton/json",
-        "Content-type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("secret")}`
-      },
-      body: JSON.stringify({
-        product_id: this.props.product.id,
-        quantity: this.state.quantity - 1
-      })
-    }).then(response => {
-      if (response.status === 204) {
-        this.props.fetchCart();
-      }
-    });
+    axios
+      .put(
+        "/cart",
+        {
+          product_id: this.props.product.id,
+          quantity: this.state.quantity - 1
+        },
+        authHeaders()
+      )
+      .then(() => this.props.fetchCart());
   };
 
   render() {
@@ -273,40 +266,26 @@ class _Cart extends Component {
   }
 
   fetchCart = () => {
-    fetch(`${process.env.API_URL}/cart`, {
-      method: "GET",
-      headers: {
-        Accept: "applicaton/json",
-        "Content-type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("secret")}`
-      }
-    })
-      .then(response => {
-        if (response.status === 200) {
-          return response.json();
-        }
-      })
-      .then(Products => {
+    axios
+      .get("/cart", authHeaders())
+      .then(response =>
         this.setState({
-          products: Products
-        });
+          products: response.data
+        })
+      )
+      .catch(error => {
+        console.log(error);
       });
   };
 
   handleOrder = event => {
     event.preventDefault();
-    fetch(`${process.env.API_URL}/orders`, {
-      method: "POST",
-      headers: {
-        Accept: "applicaton/json",
-        "Content-type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("secret")}`
-      }
-    }).then(response => {
-      if (response.status === 201) {
-        Router.push("/orders");
-      }
-    });
+    axios
+      .post("/orders", {}, authHeaders())
+      .then(() => Router.push("/orders"))
+      .catch(error => {
+        console.log(error);
+      });
   };
 
   render() {
@@ -329,7 +308,7 @@ class _Cart extends Component {
               {products.map(product => (
                 <Product
                   product={product}
-                  key={Product.id}
+                  key={product.id}
                   fetchCart={this.fetchCart}
                 />
               ))}

@@ -103,3 +103,11 @@ class _Navbar extends Component {
 }
 
 export const Navbar = withStyles(navbarStyles)(_Navbar);
+
+export function authHeaders() {
+  return {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("secret")}`
+    }
+  };
+}

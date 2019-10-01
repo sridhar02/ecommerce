@@ -2,12 +2,14 @@ import React, { Component, Fragment } from "react";
 
 import fetch from "isomorphic-unfetch";
 
-import { Navbar } from "../src/utils";
+import { Navbar, authHeaders } from "../src/utils";
 import { withStyles } from "@material-ui/core/styles";
 
 import { Button, Typography } from "@material-ui/core";
 
 import Link from "next/link";
+
+import axios from "axios";
 
 const productStyles = theme => ({
   name: {
@@ -31,21 +33,12 @@ class _Product extends Component {
   handleCart = event => {
     const { product } = this.props;
     event.preventDefault();
-    fetch(`${process.env.API_URL}/cart`, {
-      method: "POST",
-      headers: {
-        Accept: "applicaton/json",
-        "Content-type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("secret")}`
-      },
-      body: JSON.stringify({
-        product_id: product.id
-      })
-    }).then(response => {
-      if (response.status === 201) {
-        this.props.fetchCart();
-      }
-    });
+    axios
+      .post("/cart", { product_id: product.id }, authHeaders())
+      .then(() => this.props.fetchCart())
+      .catch(error => {
+        console.log(error);
+      });
   };
 
   render() {
@@ -114,16 +107,11 @@ class _Products extends Component {
   }
 
   componentDidMount() {
-    fetch(`${process.env.API_URL}/products`)
-      .then(response => {
-        if (response.status === 200) {
-          return response.json();
-        }
-      })
-      .then(products => {
-        if (products) {
-          this.setState({ products });
-        }
+    axios
+      .get("/products")
+      .then(response => this.setState({ products: response.data }))
+      .catch(error => {
+        console.log(error);
       });
 
     if (localStorage.getItem("secret")) {
@@ -131,23 +119,13 @@ class _Products extends Component {
     }
   }
   fetchCart = () => {
-    fetch(`${process.env.API_URL}/cart`, {
-      method: "GET",
-      headers: {
-        Accept: "applicaton/json",
-        "Content-type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("secret")}`
-      }
-    })
+    axios
+      .get("/cart", authHeaders())
       .then(response => {
-        if (response.status === 200) {
-          return response.json();
-        }
+        this.setState({ cartProducts: response.data });
       })
-      .then(cartProducts => {
-        if (cartProducts) {
-          this.setState({ cartProducts });
-        }
+      .catch(error => {
+        console.log(error);
       });
   };
   render() {

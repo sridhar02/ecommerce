@@ -7,6 +7,8 @@ import Link from "next/link";
 
 import { Button, TextField, Typography } from "@material-ui/core";
 
+import axios from "axios";
+
 const loginStyles = theme => ({
   order: {
     display: "flex"
@@ -89,27 +91,14 @@ class _Login extends Component {
 
   handleSubmit = event => {
     event.preventDefault();
-    fetch(`${process.env.API_URL}/user/sign_in`, {
-      method: "POST",
-      headers: {
-        Accept: "applicaton/json",
-        "Content-type": "application/json"
-      },
-      body: JSON.stringify({
+    axios
+      .post(`${process.env.API_URL}/user/sign_in`, {
         email: this.state.email,
         password: this.state.password
       })
-    })
       .then(response => {
-        if (response.status === 201) {
-          return response.json();
-        }
-      })
-      .then(data => {
-        if (data) {
-          localStorage.setItem("secret", data.secret);
-          Router.push("/products");
-        }
+        localStorage.setItem("secret", response.data.secret);
+        Router.push("/products");
       });
   };
   render() {
