@@ -54,7 +54,7 @@ func postOrderHandler(c *gin.Context, db *sql.DB) {
 
 	for _, productQuantity := range productQuantitys {
 
-		_, err = db.Exec(`INSERT INTO order_products(order_id,product_id,quantity)VALUES($1,$2,$3)`,
+		_, err = db.Exec(`INSERT INTO order_products (order_id, product_id, quantity) VALUES ($1, $2, $3)`,
 			orderId, productQuantity.ProductId, productQuantity.Quantity)
 		if err != nil {
 			fmt.Println(err)
@@ -72,9 +72,9 @@ func postOrderHandler(c *gin.Context, db *sql.DB) {
 }
 
 type OrderResponse struct {
-	ID            int            `json:"id,omitempty"`
-	CreatedAt     time.Time      `json:"created_at,omitempty"`
-	OrderProducts []OrderProduct `json:"products"`
+	ID        int            `json:"id,omitempty"`
+	CreatedAt time.Time      `json:"created_at,omitempty"`
+	Products  []OrderProduct `json:"products"`
 }
 
 type OrderProduct struct {
@@ -91,7 +91,7 @@ func getOrdersHandler(c *gin.Context, db *sql.DB) {
 	if err != nil {
 		return
 	}
-	rows, err := db.Query(`SELECT id,created_at FROM orders WHERE user_id=$1`, userId)
+	rows, err := db.Query(`SELECT id, created_at FROM orders WHERE user_id=$1`, userId)
 	if err != nil {
 		fmt.Println(err)
 		c.AbortWithStatus(http.StatusInternalServerError)
@@ -115,9 +115,8 @@ func getOrdersHandler(c *gin.Context, db *sql.DB) {
 		orderResponses = append(orderResponses, orderResponse)
 	}
 	for i, orderResponse := range orderResponses {
-		rows, err := db.Query(`SELECT products.id,products.name,products.image,products.price,
-								order_products.quantity FROM order_products JOIN products ON 
-								order_products.product_id= products.id WHERE order_id =$1`,
+		rows, err := db.Query(`SELECT products.id, products.name, products.image, products.price, order_products.quantity 
+			                  FROM order_products JOIN products ON  order_products.product_id= products.id WHERE order_id =$1`,
 			orderResponse.ID)
 		if err != nil {
 			fmt.Println(err)
@@ -145,7 +144,7 @@ func getOrdersHandler(c *gin.Context, db *sql.DB) {
 			}
 			orderProducts = append(orderProducts, orderProduct)
 		}
-		orderResponses[i].OrderProducts = orderProducts
+		orderResponses[i].Products = orderProducts
 	}
 
 	c.JSON(http.StatusOK, orderResponses)
