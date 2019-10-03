@@ -11,6 +11,8 @@ import Link from "next/link";
 
 import axios from "axios";
 
+import matchSorter from "match-sorter";
+
 const productStyles = theme => ({
   name: {
     marginTop: theme.spacing(0.5),
@@ -102,7 +104,8 @@ class _Products extends Component {
     super(props);
     this.state = {
       products: props.products || [],
-      cartProducts: props.cartProducts || []
+      cartProducts: props.cartProducts || [],
+      search: ""
     };
   }
 
@@ -128,14 +131,20 @@ class _Products extends Component {
         console.log(error);
       });
   };
+  setSearch = event => {
+    this.setState({
+      search: event.target.value
+    });
+  };
   render() {
     const { classes } = this.props;
-    const { cartProducts, products } = this.state;
+    const { cartProducts, products, search } = this.state;
+    let filteredProducts = matchSorter(products, search, { keys: ["name"] });
     return (
       <Fragment>
-        <Navbar />
+        <Navbar search={search} setSearch={this.setSearch} />
         <div className={classes.section}>
-          {products.map(product => (
+          {filteredProducts.map(product => (
             <Product
               product={product}
               key={product.id}
