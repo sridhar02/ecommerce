@@ -43,15 +43,12 @@ const navbarStyles = theme => ({
 });
 
 class _Navbar extends Component {
-  constructor(props) {
-    super(props);
-  }
   onSignout = () => {
     localStorage.removeItem("secret");
     Router.push("/login");
   };
   render() {
-    const { classes } = this.props;
+    const { classes, search, setSearch } = this.props;
     let authorized;
     if (typeof window !== "undefined" && localStorage.getItem("secret")) {
       authorized = (
@@ -88,11 +85,12 @@ class _Navbar extends Component {
               <img className={classes.flipkart} src="/static/logo.png" />
             </Link>
             <InputBase
-              id="outlined-bare"
               variant="outlined"
               inputProps={{ "aria-label": "bare" }}
               className={classes.searchInput}
               placeholder="Search products"
+              value={search}
+              onChange={setSearch}
             />
             {authorized}
           </Toolbar>
