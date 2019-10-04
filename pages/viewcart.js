@@ -18,6 +18,8 @@ import { Button, TextField, Typography } from "@material-ui/core";
 
 import axios from "axios";
 
+import cx from "classnames";
+
 const emptyCartStyles = theme => ({
   image: {
     textAlign: "center",
@@ -65,29 +67,29 @@ const EmptyCart = withStyles(emptyCartStyles)(_EmptyCart);
 
 const productStyles = theme => ({
   image: {
-    margin: "10px",
+    // margin: "10px",
+    // marginLeft: "30px",
     height: "100px",
-    marginLeft: "30px",
     width: "120px"
   },
   productDetails: {
-    display: "flex",
-    flexDirection: "column",
-    margin: "10px 10px 10px 10px "
+    // display: "flex",
+    // flexDirection: "column",
+    // margin: "10px 10px 10px 10px "
   },
   textField: {
-    marginLeft: theme.spacing(1),
-    marginRight: theme.spacing(1),
-    width: "15px",
-    padding: "5px",
+    // marginLeft: theme.spacing(1),
+    // marginRight: theme.spacing(1),
+    // width: "15px",
+    // padding: "5px",
     borderRadius: "2px",
     border: "1px solid #ccc"
   },
   productView: {
-    display: "flex"
+    // display: "flex"
   },
   icons: {
-    marginLeft: "20px"
+    // marginLeft: "20px"
   }
 });
 
@@ -149,18 +151,25 @@ class _Product extends Component {
             <img src={product.image} className={classes.image} />
           </div>
           <div className={classes.productDetails}>
-            <Typography>{product.name}</Typography>
-            <Typography variant="body2">₹{product.price} </Typography>
+            <Typography variant="body2">{product.name}</Typography>
+            <Typography variant="body2">₹{product.price}</Typography>
           </div>
         </div>
         <div className={classes.icons}>
-          <IconButton onClick={this.handleDecrement} disabled={quantity === 1}>
-            <RemoveIcon />
-          </IconButton>
+          <div>
+            <IconButton
+              onClick={this.handleDecrement}
+              disabled={quantity === 1}
+            >
+              <RemoveIcon />
+            </IconButton>
+          </div>
           <span className={classes.textField}>{this.state.quantity}</span>
-          <IconButton onClick={this.handleIncrement}>
-            <AddIcon />
-          </IconButton>
+          <div>
+            <IconButton onClick={this.handleIncrement}>
+              <AddIcon />
+            </IconButton>
+          </div>
         </div>
       </div>
     );
@@ -196,7 +205,7 @@ class _Price extends Component {
   render() {
     const { classes, products, sum } = this.props;
     return (
-      <div className={classes.alignment}>
+      <div className={cx(classes.alignment, "col")}>
         <Typography variant="h6" className={classes.priceDetails}>
           PRICE DETAILS
         </Typography>
@@ -220,35 +229,16 @@ class _Price extends Component {
 const Price = withStyles(priceStyles)(_Price);
 
 const cartStyles = theme => ({
-  mycart: {
-    fontSize: "18px",
-    lineHeight: "56px",
-    padding: "0 24px",
-    fontWeight: "500"
-  },
+  mycart: {},
   mainSection: {
-    margin: theme.spacing(2),
-    minWidth: "800px",
-    margin: "20px auto",
     border: "1px solid #ccc",
-    backgroundColor: "white",
-    padding: "10px"
+    backgroundColor: "white"
   },
-  placeOrder: {
-    display: "flex",
-    justifyContent: "flex-end"
-  },
+  placeOrder: {},
   sideSection: {
-    border: "1px solid #ccc",
-    minWidth: "400px",
-    margin: "20px auto",
-    marginRight: "60px",
-    backgroundColor: "white",
-    alignItems: "center",
-    height: "200px"
+    border: "1px solid #ccc"
   },
   section: {
-    display: "flex",
     backgroundColor: "#eceff1"
   }
 });
@@ -301,19 +291,24 @@ class _Cart extends Component {
     return (
       <Fragment>
         <Navbar />
-        <div className={classes.section}>
-          <div className={classes.mainSection}>
-            <Typography className={classes.mycart}>My Cart</Typography>
-            <div>
-              {products.map(product => (
-                <Product
-                  product={product}
-                  key={product.id}
-                  fetchCart={this.fetchCart}
-                />
-              ))}
+        <div className={cx(classes.section, "container")}>
+          <div className="row">
+            <div className="col">
+              <Typography className={classes.mycart}>My Cart</Typography>
+              <div>
+                {products.map(product => (
+                  <Product
+                    product={product}
+                    key={product.id}
+                    fetchCart={this.fetchCart}
+                  />
+                ))}
+              </div>
             </div>
-            <div className={classes.placeOrder}>
+          </div>
+          <div className="row">
+            <div className="col-6">₹{sum}</div>
+            <div className="col-6">
               <Button
                 variant="contained"
                 color="primary"
@@ -323,9 +318,9 @@ class _Cart extends Component {
               </Button>
             </div>
           </div>
-          <div className={classes.sideSection}>
-            <Price products={products} sum={sum} />
-          </div>
+        </div>
+        <div className={classes.sideSection}>
+          {/*<Price products={products} sum={sum} />*/}
         </div>
       </Fragment>
     );
