@@ -1,5 +1,6 @@
 import React, { Component, Fragment } from "react";
 import Router from "next/router";
+import cx from "classnames";
 
 import { withStyles } from "@material-ui/core/styles";
 
@@ -9,42 +10,26 @@ import { Button, TextField, Typography } from "@material-ui/core";
 
 import axios from "axios";
 
+import useMediaQuery from "@material-ui/core/useMediaQuery";
+
 const loginStyles = theme => ({
   order: {
     display: "flex"
   },
-  mainSection: {
-    paddingLeft: "200px",
-    paddingTop: "50px",
-    maxWidth: "1000px",
-    margin: "0 auto",
-    height: "600px",
-    display: "flex",
-    flex: "center"
-  },
-  space: {
-    paddingTop: "40px"
-  },
+  mainSection: {},
+  space: {},
   login: {
     fontSize: "29px",
     fontWeight: "500"
   },
   displayText: {
     fontSize: "18px",
-    marginTop: "16px",
     lineHeight: "150%"
   },
-  loginLayout: {
-    margin: "15px",
-    paddingTop: "20px",
-    display: "flex",
-    flexDirection: "column",
-    height: "600px"
-  },
+  loginLayout: {},
 
   loginButton: {
-    marginTop: "36px",
-    padding: "10px",
+    margin: theme.spacing(2),
     background: "#fb641b",
     boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.2)",
     border: "none",
@@ -52,26 +37,17 @@ const loginStyles = theme => ({
   },
 
   password: {
-    marginTop: "36px",
-    padding: "10px"
+    padding: theme.spacing(2)
   },
 
   loginText: {
-    padding: "10px"
+    padding: theme.spacing(2)
   },
   sideBar: {
-    padding: "10px",
-    margin: "15px",
-    backgroundColor: "lightblue",
-    width: "300px",
-    height: "300px",
-    display: "inline-block",
-    flexDirection: "column"
+    backgroundColor: "lightblue"
+    // height: "300px",
   },
-  createAccount: {
-    marginTop: "35px",
-    padding: "10px"
-  }
+  createAccount: {}
 });
 
 class _Login extends Component {
@@ -105,41 +81,54 @@ class _Login extends Component {
     const { classes } = this.props;
 
     return (
-      <div className={classes.mainSection}>
-        <div className={classes.sideBar}>
-          <span className={classes.login}>Login</span>
-          <p className={classes.displayText}>
-            <span>Get access to your Orders, Wishlist and Recommendations</span>
-          </p>
-        </div>
-        <form onSubmit={this.handleSubmit}>
-          <div className={classes.loginLayout}>
-            <TextField
-              name="email"
-              type="text"
-              value={this.state.email}
-              onChange={this.handleChange}
-              placeholder="Enter Email/Mobile Number"
-              className={classes.loginText}
-            />
-            <TextField
-              name="password"
-              type="password"
-              value={this.state.password}
-              onChange={this.handleChange}
-              placeholder="Enter password"
-              className={classes.password}
-            />
-            <Button className={classes.loginButton} type="submit">
-              Login
-            </Button>
-            <div className={classes.space}>
+      <div className={cx(classes.mainSection, "container")}>
+        <div className="row">
+          <div
+            className={cx(
+              classes.sideBar,
+              "col-md-4 offset-md-2 d-none d-md-block"
+            )}
+          >
+            <span className={classes.login}>Login</span>
+            <p className={classes.displayText}>
+              <span>
+                Get access to your Orders, Wishlist and Recommendations
+              </span>
+            </p>
+          </div>
+          <form onSubmit={this.handleSubmit} className={"col-12 col-md-4"}>
+            <div className="row justify-content-center">
+              <TextField
+                name="email"
+                type="text"
+                value={this.state.email}
+                onChange={this.handleChange}
+                placeholder="Enter Email/Mobile Number"
+                className={classes.loginText}
+              />
+            </div>
+            <div className="row justify-content-center">
+              <TextField
+                name="password"
+                type="password"
+                value={this.state.password}
+                onChange={this.handleChange}
+                placeholder="Enter password"
+                className={cx(classes.password, "row")}
+              />
+            </div>
+            <div className="row justify-content-center">
+              <Button className={classes.loginButton} type="submit">
+                Login
+              </Button>
+            </div>
+            <div className={cx(classes.space, "row justify-content-center")}>
               <Link href="/sign_up">
                 <a> New to Flipkart? Create an account</a>
               </Link>
             </div>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
     );
   }

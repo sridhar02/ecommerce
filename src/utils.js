@@ -15,31 +15,31 @@ import Toolbar from "@material-ui/core/Toolbar";
 import IconButton from "@material-ui/core/IconButton";
 import InputBase from "@material-ui/core/InputBase";
 
-const navbarStyles = theme => ({
-  root: {
-    flexGrow: 1,
-    fontFamily: "Roboto,Arial,sans-serif",
-    letterSpacing: "0"
-  },
+import ShoppingCart from "@material-ui/icons/ShoppingCart";
+import AccountCircle from "@material-ui/icons/AccountCircle";
+import Assignment from "@material-ui/icons/Assignment";
+import ExitToApp from "@material-ui/icons/ExitToApp";
+
+const navbarStyles = (theme) => ({
   button: {
     padding: theme.spacing(1.5),
     margin: "0 10px",
     fontWeight: "bold",
     fontSize: theme.spacing(2.5),
-    color: "white"
+    color: "white",
   },
   flipkart: {
-    height: "100%",
-    marginLeft: theme.spacing(15.5)
+    // height: "100%",
+    // marginLeft: theme.spacing(15.5)
   },
   searchInput: {
     backgroundColor: "white",
-    margin: "0 30px 0 12px",
-    width: "50%"
+    // margin: "0 30px 0 12px",
+    width: "100%",
   },
   login: {
-    color: "white"
-  }
+    color: "white",
+  },
 });
 
 class _Navbar extends Component {
@@ -50,9 +50,10 @@ class _Navbar extends Component {
   render() {
     const { classes, search, setSearch } = this.props;
     let authorized;
+    let iconAuthorized;
     if (typeof window !== "undefined" && localStorage.getItem("secret")) {
       authorized = (
-        <div>
+        <div className="d-none d-md-block col-md-6">
           <Link href="/account">
             <Button color="inherit">USER</Button>
           </Link>
@@ -65,6 +66,28 @@ class _Navbar extends Component {
           <Button color="inherit" onClick={this.onSignout}>
             SIGNOUT
           </Button>
+        </div>
+      );
+      iconAuthorized = (
+        <div className="d-md-none">
+          <Link href="/account">
+            <IconButton color="inherit">
+              <AccountCircle />
+            </IconButton>
+          </Link>
+          <Link href="/viewcart">
+            <IconButton color="inherit">
+              <ShoppingCart />
+            </IconButton>
+          </Link>
+          <Link href="/orders">
+            <IconButton color="inherit">
+              <Assignment />
+            </IconButton>
+          </Link>
+          <IconButton color="inherit">
+            <ExitToApp />
+          </IconButton>
         </div>
       );
     } else {
@@ -80,20 +103,26 @@ class _Navbar extends Component {
     return (
       <div className={classes.root}>
         <AppBar position="static">
-          <Toolbar>
-            <Link href="/products">
-              <img className={classes.flipkart} src="/static/logo.png" />
-            </Link>
-            <InputBase
-              variant="outlined"
-              inputProps={{ "aria-label": "bare" }}
-              className={classes.searchInput}
-              placeholder="Search products"
-              value={search}
-              onChange={setSearch}
-            />
-            {authorized}
-          </Toolbar>
+          <div className="container">
+            <div className="row">
+              <div className="col-4 col-md-2">
+                <Link href="/products">
+                  <img className={classes.flipkart} src="/static/logo.png" />
+                </Link>{" "}
+              </div>
+              {iconAuthorized}
+              <div className="col-12 col-md-4">
+                <InputBase
+                  id="outlined-bare"
+                  variant="outlined"
+                  inputProps={{ "aria-label": "bare" }}
+                  className={classes.searchInput}
+                  placeholder="Search products"
+                />
+              </div>
+              {authorized}
+            </div>
+          </div>
         </AppBar>
       </div>
     );
@@ -105,7 +134,7 @@ export const Navbar = withStyles(navbarStyles)(_Navbar);
 export function authHeaders() {
   return {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("secret")}`
-    }
+      Authorization: `Bearer ${localStorage.getItem("secret")}`,
+    },
   };
 }
