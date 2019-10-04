@@ -168,6 +168,57 @@ class _Product extends Component {
 }
 const Product = withStyles(productStyles)(_Product);
 
+const priceStyles = theme => ({
+  price: {
+    display: "flex",
+    padding: theme.spacing(1),
+    justifyContent: "space-between"
+  },
+  priceDetails: {
+    textAlign: "center",
+    padding: theme.spacing(1),
+    borderBottom: "1px solid #eceff1"
+  },
+  delivery: {
+    display: "flex",
+    padding: theme.spacing(1),
+    justifyContent: "space-between",
+    borderBottom: "1px solid #eceff1"
+  },
+  total: {
+    display: "flex",
+    padding: theme.spacing(1),
+    justifyContent: "space-between"
+  }
+});
+
+class _Price extends Component {
+  render() {
+    const { classes, products, sum } = this.props;
+    return (
+      <div className={classes.alignment}>
+        <Typography variant="h6" className={classes.priceDetails}>
+          PRICE DETAILS
+        </Typography>
+        <div className={classes.price}>
+          <div>Price ({products.length} items):</div>
+          <div>{sum}</div>
+        </div>
+        <div className={classes.delivery}>
+          <div>Delivery :</div>
+          <div>Free</div>
+        </div>
+        <div className={classes.total}>
+          <div>Total Payable:</div>
+          <div>{sum}</div>
+        </div>
+      </div>
+    );
+  }
+}
+
+const Price = withStyles(priceStyles)(_Price);
+
 const cartStyles = theme => ({
   mycart: {
     fontSize: "18px",
@@ -201,57 +252,6 @@ const cartStyles = theme => ({
     backgroundColor: "#eceff1"
   }
 });
-
-const priceStyles = theme => ({
-  price: {
-    display: "flex",
-    padding: theme.spacing(1),
-    justifyContent: "space-between"
-  },
-  priceDetails: {
-    textAlign: "center",
-    padding: theme.spacing(1),
-    borderBottom: "1px solid #eceff1"
-  },
-  delivery: {
-    display: "flex",
-    padding: theme.spacing(1),
-    justifyContent: "space-between",
-    borderBottom: "1px solid #eceff1"
-  },
-  total: {
-    display: "flex",
-    padding: theme.spacing(1),
-    justifyContent: "space-between"
-  }
-});
-
-class _Price extends Component {
-  render() {
-    const { classes, products, sum } = this.props;
-    return (
-      <div>
-        <Typography variant="h6" className={classes.priceDetails}>
-          PRICE DETAILS
-        </Typography>
-        <div className={classes.price}>
-          <div>Price ({products.length} items):</div>
-          <div>{sum}</div>
-        </div>
-        <div className={classes.delivery}>
-          <div>Delivery :</div>
-          <div>Free</div>
-        </div>
-        <div className={classes.total}>
-          <div>Total Payable:</div>
-          <div>{sum}</div>
-        </div>
-      </div>
-    );
-  }
-}
-
-const Price = withStyles(priceStyles)(_Price);
 
 class _Cart extends Component {
   constructor(props) {

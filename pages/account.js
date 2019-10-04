@@ -470,7 +470,9 @@ const userStyles = theme => ({
   userSection: {
     display: "flex",
     margin: "20px",
-    backgroundColor: "#eceff1"
+    backgroundColor: "#eceff1",
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))"
   }
 });
 
