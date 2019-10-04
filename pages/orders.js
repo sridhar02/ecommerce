@@ -12,6 +12,8 @@ import { Button, TextField, Typography } from "@material-ui/core";
 
 import axios from "axios";
 
+import cx from "classnames";
+
 const productStyles = theme => ({
   name: {
     height: theme.spacing(4.5),
@@ -35,18 +37,16 @@ const productStyles = theme => ({
 
 function _Product({ classes, product }) {
   return (
-    <div className={classes.product}>
-      <div>
-        <img className={classes.image} src={product.image} />
-      </div>
-      <div className={classes.productDetails}>
+    <Fragment>
+      <div className={cx(classes.productDetails, "col - 6")}>
         <Typography variant="body2" className={classes.name}>
           {product.name}
         </Typography>
-        <Typography variant="body2">₹{product.price}</Typography>
-        <Typography variant="body2">Quantity:{product.quantity}</Typography>
       </div>
-    </div>
+      <div className="col-6">
+        <img className={classes.image} src={product.image} />
+      </div>
+    </Fragment>
   );
 }
 
@@ -61,8 +61,8 @@ const orderstyles = theme => ({
     padding: "10px"
   },
   productSection: {
-    border: "1px solid #eceff1",
-    margin: "20px"
+    border: "1px solid #eceff1"
+    // margin: "20px"
   }
 });
 function _Order({ classes, order }) {
@@ -71,15 +71,11 @@ function _Order({ classes, order }) {
     sum += product.price * product.quantity;
   }
   return (
-    <div className={classes.productSection}>
-      <div className={classes.orderDetails}>
-        <Typography>Order Number: {order.id}</Typography>
-        <Typography> Ordered On: {order.created_at}</Typography>
-      </div>
+    <div className={cx(classes.productSection, "row")}>
       {order.products.map(product => (
         <Product product={product} key={product.id} />
       ))}
-      <Typography variant="h6"> Order Total :₹{sum}</Typography>
+      {/*<Typography variant="h6"> Order Total :₹{sum}</Typography>*/}
     </div>
   );
 }
@@ -88,13 +84,9 @@ const Order = withStyles(orderstyles)(_Order);
 
 const ordersStyles = theme => ({
   section: {
-    backgroundColor: "#eceff1"
+    // backgroundColor: "#eceff1"
   },
-  mainSection: {
-    margin: "0px 40px",
-    border: "1px solid #ccc",
-    backgroundColor: "white"
-  },
+  mainSection: {},
   title: {
     margin: "25px"
   }
@@ -122,17 +114,21 @@ class _Orders extends Component {
   render() {
     const { classes } = this.props;
     return (
-      <div className={classes.section}>
+      <Fragment>
         <Navbar />
-        <div className={classes.mainSection}>
-          <Typography variant="h6" className={classes.title}>
-            My Account > My Orders
-          </Typography>
+        <div className={cx(classes.section, "container")}>
+          <div className="row">
+            <div className="col">
+              <Typography variant="h6" className={classes.title}>
+                My Account > My Orders
+              </Typography>
+            </div>
+          </div>
           {this.state.orders.map(order => (
             <Order order={order} key={order.id} />
           ))}
         </div>
-      </div>
+      </Fragment>
     );
   }
 }

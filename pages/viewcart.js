@@ -67,29 +67,28 @@ const EmptyCart = withStyles(emptyCartStyles)(_EmptyCart);
 
 const productStyles = theme => ({
   image: {
-    // margin: "10px",
-    // marginLeft: "30px",
-    height: "100px",
-    width: "120px"
-  },
-  productDetails: {
-    // display: "flex",
-    // flexDirection: "column",
-    // margin: "10px 10px 10px 10px "
+    height: "72px",
+    width: "72px"
   },
   textField: {
-    // marginLeft: theme.spacing(1),
-    // marginRight: theme.spacing(1),
-    // width: "15px",
-    // padding: "5px",
+    paddingTop: theme.spacing(1),
+    backgroundColor: "white",
     borderRadius: "2px",
-    border: "1px solid #ccc"
+    borderTop: "1px solid #ccc"
   },
-  productView: {
-    // display: "flex"
+  icons: {},
+  productDetails: {
+    paddingTop: theme.spacing(1),
+    backgroundColor: "white"
   },
-  icons: {
-    // marginLeft: "20px"
+  quantity: {
+    backgroundColor: "white",
+    marginBottom: theme.spacing(1)
+  },
+  product: {
+    fontSize: "16px",
+    fontWeight: "bold",
+    color: "black"
   }
 });
 
@@ -145,18 +144,29 @@ class _Product extends Component {
     const { classes, product } = this.props;
     const { quantity } = this.state;
     return (
-      <div>
-        <div className={classes.productView}>
-          <div>
+      <Fragment className={classes.productSection}>
+        <div className={cx(classes.textField, "row")}>
+          <div className={cx(classes.product, "col-6")}>
+            <Typography>{product.name}</Typography>
+          </div>
+          <div className="col offset-2 ">
             <img src={product.image} className={classes.image} />
           </div>
-          <div className={classes.productDetails}>
-            <Typography variant="body2">{product.name}</Typography>
-            <Typography variant="body2">₹{product.price}</Typography>
-          </div>
         </div>
-        <div className={classes.icons}>
-          <div>
+        <div
+          className={cx(classes.productDetails, "row justify-content-between")}
+        >
+          <div className="col-6">
+            <Typography variant="h6">
+              ₹{product.price * product.quantity}
+            </Typography>
+          </div>
+          <span className={cx(classes.border, "col-3  ")}>
+            Qty:{this.state.quantity}
+          </span>
+        </div>
+        <div className={cx(classes.quantity, "row ")}>
+          <div className="col-1 offset-8">
             <IconButton
               onClick={this.handleDecrement}
               disabled={quantity === 1}
@@ -164,14 +174,13 @@ class _Product extends Component {
               <RemoveIcon />
             </IconButton>
           </div>
-          <span className={classes.textField}>{this.state.quantity}</span>
-          <div>
+          <div className="col-1">
             <IconButton onClick={this.handleIncrement}>
               <AddIcon />
             </IconButton>
           </div>
         </div>
-      </div>
+      </Fragment>
     );
   }
 }
@@ -179,25 +188,25 @@ const Product = withStyles(productStyles)(_Product);
 
 const priceStyles = theme => ({
   price: {
-    display: "flex",
-    padding: theme.spacing(1),
-    justifyContent: "space-between"
+    // display: "flex",
+    // padding: theme.spacing(1),
+    // justifyContent: "space-between"
   },
   priceDetails: {
-    textAlign: "center",
-    padding: theme.spacing(1),
-    borderBottom: "1px solid #eceff1"
+    // textAlign: "center",
   },
   delivery: {
-    display: "flex",
-    padding: theme.spacing(1),
-    justifyContent: "space-between",
-    borderBottom: "1px solid #eceff1"
+    // display: "flex",
+    // padding: theme.spacing(1),
+    // justifyContent: "space-between",
+    // borderBottom: "1px solid #eceff1"
   },
-  total: {
-    display: "flex",
-    padding: theme.spacing(1),
-    justifyContent: "space-between"
+  alignment: {
+    borderTop: "1px solid #eceff1",
+    marginBottom: theme.spacing(1),
+    backgroundColor: "white"
+    // display: "flex",
+    // justifyContent: "space-between"
   }
 });
 
@@ -205,23 +214,23 @@ class _Price extends Component {
   render() {
     const { classes, products, sum } = this.props;
     return (
-      <div className={cx(classes.alignment, "col")}>
-        <Typography variant="h6" className={classes.priceDetails}>
-          PRICE DETAILS
-        </Typography>
-        <div className={classes.price}>
-          <div>Price ({products.length} items):</div>
-          <div>{sum}</div>
+      <Fragment>
+        <div className={cx(classes.alignment, "col")}>
+          <div className={cx(classes.priceDetails, "row")}>
+            <div className="col">PRICE DETAILS</div>
+          </div>
+          <div className={cx(classes.price, "row")}>
+            <div className="col-6">Price ({products.length} items)</div>
+            <div className="col-3 offset-3">{sum}</div>
+            <div className="col-6">Delivery :</div>
+            <div className="col-3 offset-3">Free</div>
+          </div>
+          <div className={cx(classes.total, "row")}>
+            <div className="col-6">Total Payable:</div>
+            <div className="col-3 offset-3">{sum}</div>
+          </div>
         </div>
-        <div className={classes.delivery}>
-          <div>Delivery :</div>
-          <div>Free</div>
-        </div>
-        <div className={classes.total}>
-          <div>Total Payable:</div>
-          <div>{sum}</div>
-        </div>
-      </div>
+      </Fragment>
     );
   }
 }
@@ -229,7 +238,9 @@ class _Price extends Component {
 const Price = withStyles(priceStyles)(_Price);
 
 const cartStyles = theme => ({
-  mycart: {},
+  mycart: {
+    margin: theme.spacing(1)
+  },
   mainSection: {
     border: "1px solid #ccc",
     backgroundColor: "white"
@@ -238,8 +249,9 @@ const cartStyles = theme => ({
   sideSection: {
     border: "1px solid #ccc"
   },
-  section: {
-    backgroundColor: "#eceff1"
+  grandTotal: {
+    border: "1px solid #ccc",
+    margin: theme.spacing(1)
   }
 });
 
@@ -294,21 +306,24 @@ class _Cart extends Component {
         <div className={cx(classes.section, "container")}>
           <div className="row">
             <div className="col">
-              <Typography className={classes.mycart}>My Cart</Typography>
-              <div>
-                {products.map(product => (
-                  <Product
-                    product={product}
-                    key={product.id}
-                    fetchCart={this.fetchCart}
-                  />
-                ))}
-              </div>
+              <Typography className={classes.mycart}>
+                My Cart ({products.length})
+              </Typography>
+              {products.map(product => (
+                <Product
+                  product={product}
+                  key={product.id}
+                  fetchCart={this.fetchCart}
+                />
+              ))}
             </div>
           </div>
-          <div className="row">
-            <div className="col-6">₹{sum}</div>
-            <div className="col-6">
+          <div className="row">{<Price products={products} sum={sum} />}</div>
+          <div className={(classes.grandTotal, "row justify-content-between")}>
+            <div className="col">
+              <Typography variant="h6"> ₹{sum}</Typography>
+            </div>
+            <div className="col">
               <Button
                 variant="contained"
                 color="primary"
@@ -318,9 +333,6 @@ class _Cart extends Component {
               </Button>
             </div>
           </div>
-        </div>
-        <div className={classes.sideSection}>
-          {/*<Price products={products} sum={sum} />*/}
         </div>
       </Fragment>
     );
