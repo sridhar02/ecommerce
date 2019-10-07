@@ -68,13 +68,22 @@ const EmptyCart = withStyles(emptyCartStyles)(_EmptyCart);
 const productStyles = theme => ({
   image: {
     height: "72px",
-    width: "72px"
+    width: "100%"
   },
   textField: {
-    paddingTop: theme.spacing(1),
-    backgroundColor: "white",
-    borderRadius: "2px",
-    borderTop: "1px solid #ccc"
+    [theme.breakpoints.down("md")]: {
+      paddingTop: theme.spacing(1),
+      backgroundColor: "white",
+      borderRadius: "2px",
+      borderTop: "1px solid #ccc"
+    }
+  },
+  productSection: {
+    [theme.breakpoints.up("md")]: {
+      margin: theme.spacing(1),
+      padding: theme.spacing(2),
+      border: "1px solid #ccc"
+    }
   },
   icons: {},
   productDetails: {
@@ -89,6 +98,10 @@ const productStyles = theme => ({
     fontSize: "16px",
     fontWeight: "bold",
     color: "black"
+  },
+  icon: {
+    height: 16,
+    width: 16
   }
 });
 
@@ -144,69 +157,57 @@ class _Product extends Component {
     const { classes, product } = this.props;
     const { quantity } = this.state;
     return (
-      <Fragment className={classes.productSection}>
+      <div className={classes.productSection}>
         <div className={cx(classes.textField, "row")}>
-          <div className={cx(classes.product, "col-6")}>
+          <div className={cx(classes.product, "col-8 col-md-10")}>
             <Typography>{product.name}</Typography>
           </div>
-          <div className="col offset-2 ">
+          <div className="col-4 col-md-2">
             <img src={product.image} className={classes.image} />
           </div>
         </div>
-        <div
-          className={cx(classes.productDetails, "row justify-content-between")}
-        >
-          <div className="col-6">
-            <Typography variant="h6">
-              ₹{product.price * product.quantity}
-            </Typography>
-          </div>
-          <span className={cx(classes.border, "col-3  ")}>
-            Qty:{this.state.quantity}
-          </span>
-        </div>
-        <div className={cx(classes.quantity, "row ")}>
-          <div className="col-1 offset-8">
+        <div className={cx(classes.productDetails, "row")}>
+          <span className={"col-8 col-md-10"}>
             <IconButton
               onClick={this.handleDecrement}
               disabled={quantity === 1}
             >
-              <RemoveIcon />
+              <RemoveIcon className={classes.icon} />
             </IconButton>
-          </div>
-          <div className="col-1">
+            <span> Qty:{this.state.quantity}</span>
             <IconButton onClick={this.handleIncrement}>
-              <AddIcon />
+              <AddIcon className={classes.icon} />
             </IconButton>
+          </span>
+          <div className="col-4 col-md-2 d-flex justify-content-center">
+            <Typography variant="h6">
+              ₹{product.price * product.quantity}
+            </Typography>
           </div>
         </div>
-      </Fragment>
+      </div>
     );
   }
 }
 const Product = withStyles(productStyles)(_Product);
 
 const priceStyles = theme => ({
-  price: {
-    // display: "flex",
-    // padding: theme.spacing(1),
-    // justifyContent: "space-between"
-  },
   priceDetails: {
-    // textAlign: "center",
+    [theme.breakpoints.up("md")]: {
+      borderBottom: "1px solid #ccc",
+      padding: theme.spacing(1.8),
+      Color: "#878787"
+    }
   },
-  delivery: {
-    // display: "flex",
-    // padding: theme.spacing(1),
-    // justifyContent: "space-between",
-    // borderBottom: "1px solid #eceff1"
+  priceSection: {
+    [theme.breakpoints.up("md")]: {
+      marginTop: theme.spacing(5),
+      border: "1px solid #ccc"
+    }
   },
+  delivery: {},
   alignment: {
-    borderTop: "1px solid #eceff1",
-    marginBottom: theme.spacing(1),
-    backgroundColor: "white"
-    // display: "flex",
-    // justifyContent: "space-between"
+    marginBottom: theme.spacing(1)
   }
 });
 
@@ -214,10 +215,10 @@ class _Price extends Component {
   render() {
     const { classes, products, sum } = this.props;
     return (
-      <Fragment>
+      <div className={classes.priceSection}>
         <div className={cx(classes.alignment, "col")}>
-          <div className={cx(classes.priceDetails, "row")}>
-            <div className="col">PRICE DETAILS</div>
+          <div className="row">
+            <div className={cx(classes.priceDetails, "col")}>PRICE DETAILS</div>
           </div>
           <div className={cx(classes.price, "row")}>
             <div className="col-6">Price ({products.length} items)</div>
@@ -230,7 +231,7 @@ class _Price extends Component {
             <div className="col-3 offset-3">{sum}</div>
           </div>
         </div>
-      </Fragment>
+      </div>
     );
   }
 }
@@ -305,32 +306,38 @@ class _Cart extends Component {
         <Navbar />
         <div className={cx(classes.section, "container")}>
           <div className="row">
-            <div className="col">
-              <Typography className={classes.mycart}>
-                My Cart ({products.length})
-              </Typography>
-              {products.map(product => (
-                <Product
-                  product={product}
-                  key={product.id}
-                  fetchCart={this.fetchCart}
-                />
-              ))}
+            <div className="col-12 col-md-8">
+              <div className="col">
+                <Typography className={classes.mycart}>
+                  My Cart ({products.length})
+                </Typography>
+                {products.map(product => (
+                  <Product
+                    product={product}
+                    key={product.id}
+                    fetchCart={this.fetchCart}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
-          <div className="row">{<Price products={products} sum={sum} />}</div>
-          <div className={(classes.grandTotal, "row justify-content-between")}>
-            <div className="col">
-              <Typography variant="h6"> ₹{sum}</Typography>
+            <div className="col-12 col-md-4">
+              {<Price products={products} sum={sum} />}
             </div>
-            <div className="col">
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={this.handleOrder}
-              >
-                Place Order
-              </Button>
+            <div className={(classes.grandTotal, "col-12 col-md-8")}>
+              <div className="row">
+                <div className="col-6 d-md-none">
+                  <Typography variant="h6"> ₹{sum}</Typography>
+                </div>
+                <div className="col-6 col-md-12 d-flex justify-content-end">
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={this.handleOrder}
+                  >
+                    Place Order
+                  </Button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
