@@ -29,12 +29,14 @@ const navbarStyles = (theme) => ({
     color: "white",
   },
   flipkart: {
-    // height: "100%",
-    // marginLeft: theme.spacing(15.5)
+    marginTop: theme.spacing(1),
+    [theme.breakpoints.up("md")]: {
+      margin: theme.spacing(1),
+    },
   },
   searchInput: {
     backgroundColor: "white",
-    // margin: "0 30px 0 12px",
+    margin: theme.spacing(1),
     width: "100%",
   },
   login: {
