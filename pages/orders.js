@@ -15,38 +15,35 @@ import axios from "axios";
 import cx from "classnames";
 
 const productStyles = theme => ({
-  name: {
-    height: theme.spacing(4.5),
-    display: "flex",
-    maxWidth: "120px"
-  },
+  name: {},
   product: {
-    display: "flex"
+    margin: theme.spacing(1)
   },
   image: {
-    margin: "10px",
-    height: "100px",
-    width: "120px"
+    height: "72px",
+    width: "72px"
   },
-  productDetails: {
-    margin: "10px",
-    display: "flex",
-    flexDirection: "column"
-  }
+  productDetails: {}
 });
 
 function _Product({ classes, product }) {
   return (
-    <Fragment>
-      <div className={cx(classes.productDetails, "col - 6")}>
+    <div className={cx(classes.product, "row")}>
+      <div className={cx(classes.productDetails, "col-8")}>
         <Typography variant="body2" className={classes.name}>
           {product.name}
         </Typography>
+        <Typography variant="body2" className={classes.name}>
+          Qty: {product.quantity}
+        </Typography>
+        <Typography variant="body2" className={classes.name}>
+          Price: {product.price * product.quantity}
+        </Typography>
       </div>
-      <div className="col-6">
+      <div className="col-4">
         <img className={classes.image} src={product.image} />
       </div>
-    </Fragment>
+    </div>
   );
 }
 
@@ -61,8 +58,15 @@ const orderstyles = theme => ({
     padding: "10px"
   },
   productSection: {
-    border: "1px solid #eceff1"
-    // margin: "20px"
+    border: "1px solid #eceff1",
+    margin: theme.spacing(1),
+    [theme.breakpoints.up("md")]: {
+      margin: theme.spacing(2)
+    }
+  },
+  total: {
+    marginLeft: theme.spacing(2.5),
+    fontWeight: "bold"
   }
 });
 function _Order({ classes, order }) {
@@ -72,10 +76,14 @@ function _Order({ classes, order }) {
   }
   return (
     <div className={cx(classes.productSection, "row")}>
-      {order.products.map(product => (
-        <Product product={product} key={product.id} />
-      ))}
-      {/*<Typography variant="h6"> Order Total :₹{sum}</Typography>*/}
+      <div className="col">
+        {order.products.map(product => (
+          <Product product={product} key={product.id} />
+        ))}
+        <Typography variant="body1" className={classes.total}>
+          Order Total :₹{sum}
+        </Typography>
+      </div>
     </div>
   );
 }
@@ -122,11 +130,11 @@ class _Orders extends Component {
               <Typography variant="h6" className={classes.title}>
                 My Account > My Orders
               </Typography>
+              {this.state.orders.map(order => (
+                <Order order={order} key={order.id} />
+              ))}
             </div>
           </div>
-          {this.state.orders.map(order => (
-            <Order order={order} key={order.id} />
-          ))}
         </div>
       </Fragment>
     );

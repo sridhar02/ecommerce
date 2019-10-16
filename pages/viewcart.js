@@ -325,10 +325,10 @@ class _Cart extends Component {
             </div>
             <div className={(classes.grandTotal, "col-12 col-md-8")}>
               <div className="row">
-                <div className="col-6 d-md-none">
+                <div className="col-4 d-md-none">
                   <Typography variant="h6"> ₹{sum}</Typography>
                 </div>
-                <div className="col-6 col-md-12 d-flex justify-content-end">
+                <div className="col-8 col-md-12 d-flex justify-content-end">
                   <Button
                     variant="contained"
                     color="primary"
