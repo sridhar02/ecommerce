@@ -16,7 +16,9 @@ const loginStyles = theme => ({
   order: {
     display: "flex"
   },
-  mainSection: {},
+  mainSection: {
+    marginTop: theme.spacing(10)
+  },
   space: {},
   login: {
     fontSize: "29px",
