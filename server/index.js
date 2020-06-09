@@ -18,7 +18,6 @@ app.use(express.json()); //req.body
 // routes
 
 // signup end ppoint
-
 app.post("/user/signup", (req, res) => {
   try {
     const { username, email, password, phonenumber } = req.body;
@@ -37,13 +36,32 @@ app.post("/user/signup", (req, res) => {
 });
 
 // signin end point
+app.post("/user/sign_in", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    console.log(email, password);
+    const rows = await pool.query(
+      `SELECT password,id FROM users WHERE email=$1`,
+      [email]
+    );
+    const hash = rows.rows[0].password;
+    bcrypt.compare(password, hash, (err, result) => {
+      let secret = uuidv4();
+      result
+        ? res.status(200).json({ secret })
+        : res.json("email or password is wrong");
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
 
 async function login(userId) {
   let secret = uuidv4();
   try {
     const insertLogin = await pool.query(
       `INSERT INTO logins(user_id,secret,created_at,updated_at)
-      VALUES($1,$2,$3,$4)`,
+        VALUES($1,$2,$3,$4)`,
       [userId, secret, new Date(), new Date()]
     );
     console.log(insertLogin);
@@ -51,25 +69,6 @@ async function login(userId) {
     console.log(error);
   }
 }
-
-app.get("/user/sign_in", async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const rows = await pool.query(
-      `SELECT password,id FROM users WHERE email=$1`,
-      [email]
-    );
-    const hash = rows.rows[0].password;
-    bcrypt.compare(password, hash, (err, result) => {
-      result
-        ? res.status(200).json("payload is missing")
-        : res.json("email or password is wrong");
-    });
-  } catch (err) {
-    console.log(err.message);
-  }
-});
-
 // get products end point
 
 app.get("/products", async (req, res) => {
@@ -153,7 +152,7 @@ app.post("/order", async (req, res) => {
       `WITH order_cte AS ( INSERT INTO orders (user_id,created_at) VALUES($1,$2) RETURNING *),
       product_cte AS ( SELECT product_id,quantity FROM cart WHERE user_id IN (select * from order_cte))
       INSERT INTO order_products (order_id, product_id, quantity) VALUES from (select product_id,quantity from product_cte)`,
-      [userId,new Date()]
+      [userId, new Date()]
     );
     res.status(200).json("product inserted into cart");
   } catch (err) {
@@ -164,4 +163,3 @@ app.post("/order", async (req, res) => {
 app.listen(PORT, () => {
   console.log(`server has started on port ${PORT}`);
 });
-
