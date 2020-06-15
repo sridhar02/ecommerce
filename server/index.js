@@ -9,7 +9,7 @@ const app = express();
 const cors = require("cors");
 const pool = require("./db");
 const bcrypt = require("bcrypt");
-const { v4: uuidv4 } = require("uuid");
+const Str = require("@supercharge/strings");
 
 //middleware
 app.use(cors());
@@ -39,16 +39,26 @@ app.post("/user/signup", (req, res) => {
 app.post("/user/sign_in", async (req, res) => {
   try {
     const { email, password } = req.body;
-    console.log(email, password);
     const rows = await pool.query(
       `SELECT password,id FROM users WHERE email=$1`,
       [email]
     );
     const hash = rows.rows[0].password;
+    const userId = rows.rows[0].id;
     bcrypt.compare(password, hash, (err, result) => {
-      let secret = uuidv4();
+      let secret = Str.random(32);
+      const insertIntoLogins = pool.query(
+        `INSERT INTO logins(user_id,secret,created_at,updated_at)
+								VALUES($1,$2,$3,$4)`,
+        [userId, secret, new Date(), new Date()]
+      );
       result
-        ? res.status(200).json({ secret })
+        ? res.status(200).json({
+            userId,
+            secret,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          })
         : res.json("email or password is wrong");
     });
   } catch (error) {
@@ -56,21 +66,7 @@ app.post("/user/sign_in", async (req, res) => {
   }
 });
 
-async function login(userId) {
-  let secret = uuidv4();
-  try {
-    const insertLogin = await pool.query(
-      `INSERT INTO logins(user_id,secret,created_at,updated_at)
-        VALUES($1,$2,$3,$4)`,
-      [userId, secret, new Date(), new Date()]
-    );
-    console.log(insertLogin);
-  } catch (error) {
-    console.log(error);
-  }
-}
 // get products end point
-
 app.get("/products", async (req, res) => {
   try {
     const products = await pool.query(`SELECT * FROM products`);
@@ -81,7 +77,6 @@ app.get("/products", async (req, res) => {
 });
 
 // get cart products end point
-
 app.get("/cart", async (req, res) => {
   try {
     const cartProducts = await pool.query(
@@ -96,7 +91,6 @@ app.get("/cart", async (req, res) => {
 });
 
 // get order products end point
-
 app.get("/orders", async (req, res) => {
   try {
     const orderProducts = await pool.query(
@@ -112,7 +106,6 @@ app.get("/orders", async (req, res) => {
 });
 
 // update user information
-
 app.put("/user", async (req, res) => {
   try {
     const orderProducts = await pool.query(
@@ -131,13 +124,20 @@ app.put("/user", async (req, res) => {
 
 app.post("/cart", async (req, res) => {
   try {
-    const { userId, productId, count } = req.body;
-    const insertIntoCart = await pool.query(
-      `WITH order_cte AS ( SELECT count(*) FROM cart WHERE user_id = $1 AND product_id = $2)
-      INSERT INTO cart(product_id,user_id,Quantity)VALUES($1,$2,$3)`,
-      [productId, userId, count]
+    const { product_id } = req.body;
+    const secret = req.headers.authorization.split(" ")[1];
+    const userId = await pool.query(
+      `SELECT user_id FROM logins where secret=$1`,
+      [secret]
     );
-    res.status(200).json("product inserted into cart");
+    console.log(userId.rows[0].user_id);
+    let count = 0;
+    const insertIntoCart = await pool.query(
+      `INSERT INTO cart(product_id,user_id,Quantity)VALUES($1,$2,$3)`[
+        (product_id, userId.rows[0].user_id, count++)
+      ]
+    );
+    res.status(201);
   } catch (err) {
     console.log(err);
   }
