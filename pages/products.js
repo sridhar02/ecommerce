@@ -26,8 +26,8 @@ const productStyles = theme => ({
   },
   image: {
     margin: "10px",
-    height: "100px",
-    width: "120px"
+    height: "200px",
+    width: "220px"
   }
 });
 
