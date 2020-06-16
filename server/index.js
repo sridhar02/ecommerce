@@ -7,8 +7,6 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const pool = require("./db");
-const bcrypt = require("bcrypt");
-const Str = require("@supercharge/strings");
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./swagger.json");
 

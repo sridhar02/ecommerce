@@ -1,11 +1,42 @@
+const saltRounds = 10;
+
 const express = require("express");
 const route = express.Router();
 const pool = require("../db");
+const bcrypt = require("bcrypt");
+const Str = require("@supercharge/strings");
 
-// user signup route 
-route.post("/user/signup", (req, res) => {
+const errorMessage = { status: "error" };
+const isEmpty = (input) => {
+  if (input === undefined || input === "") {
+    return true;
+  }
+  if (input.replace(/\s/g, "").length) {
+    return false;
+  }
+  return true;
+};
+
+const status = {
+  success: 200,
+  error: 500,
+  notfound: 404,
+  unauthorized: 401,
+  conflict: 409,
+  created: 201,
+  bad: 400,
+  nocontent: 204,
+};
+
+// user signup route
+route.post("/signup", (req, res) => {
   try {
     const { username, email, password, phonenumber } = req.body;
+    if (isEmpty(email) || isEmpty(password)) {
+      errorMessage.error = "Email or Password detail is missing";
+      return res.status(status.bad).send(errorMessage);
+    }
+
     bcrypt.hash(password, saltRounds, async (err, hash) => {
       const createUser = await pool.query(
         `INSERT INTO users(username,email,password,phonenumber,created_at,updated_at)
@@ -16,14 +47,20 @@ route.post("/user/signup", (req, res) => {
     });
     console.log("user created sucessfully");
   } catch (err) {
-    console.error(err.message);
+    errorMessage.error = "Operation was not successful";
+    res.status(status.bad).send(errorMessage);
   }
 });
 
 // signin end point
-route.post("/user/sign_in", async (req, res) => {
+route.post("/sign_in", async (req, res) => {
   try {
     const { email, password } = req.body;
+    if (isEmpty(email) || isEmpty(password)) {
+      errorMessage.error = "Email or Password detail is missing";
+      return res.status(status.bad).send(errorMessage);
+    }
+
     const rows = await pool.query(
       `SELECT password,id FROM users WHERE email=$1`,
       [email]
@@ -34,7 +71,7 @@ route.post("/user/sign_in", async (req, res) => {
       let secret = Str.random(32);
       const insertIntoLogins = pool.query(
         `INSERT INTO logins(user_id,secret,created_at,updated_at)
-                                  VALUES($1,$2,$3,$4)`,
+                                  VALUES($1,$2,$3,$4) returning *`,
         [userId, secret, new Date(), new Date()]
       );
       result
@@ -47,7 +84,8 @@ route.post("/user/sign_in", async (req, res) => {
         : res.json("email or password is wrong");
     });
   } catch (error) {
-    console.log(error);
+    errorMessage.error = "Operation was not successful";
+    res.status(status.bad).send(errorMessage);
   }
 });
 
@@ -62,7 +100,8 @@ route.put("/user", async (req, res) => {
     );
     res.status(200).json(orderProducts.rows);
   } catch (err) {
-    console.log(err);
+    errorMessage.error = "Operation was not successful";
+    res.status(status.bad).send(errorMessage);
   }
 });
 
