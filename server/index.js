@@ -10,10 +10,13 @@ const cors = require("cors");
 const pool = require("./db");
 const bcrypt = require("bcrypt");
 const Str = require("@supercharge/strings");
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger.json');
 
 //middleware
 app.use(cors());
 app.use(express.json()); //req.body
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // routes
 
