@@ -19,6 +19,7 @@ import ShoppingCart from "@material-ui/icons/ShoppingCart";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import Assignment from "@material-ui/icons/Assignment";
 import ExitToApp from "@material-ui/icons/ExitToApp";
+import SearchIcon from "@material-ui/icons/Search";
 
 const navbarStyles = (theme) => ({
   button: {
@@ -36,8 +37,10 @@ const navbarStyles = (theme) => ({
   },
   searchInput: {
     backgroundColor: "white",
-    margin: theme.spacing(1),
+    margin: "8px 0px",
     width: "100%",
+    padding:"0px 20px",
+    borderRadius:"3px"
   },
   login: {
     color: "white",
@@ -120,6 +123,9 @@ class _Navbar extends Component {
                   inputProps={{ "aria-label": "bare" }}
                   className={classes.searchInput}
                   placeholder="Search products"
+                  value={search}
+                  onChange={setSearch}
+                  endAdornment={<SearchIcon />}
                 />
               </div>
               {authorized}
