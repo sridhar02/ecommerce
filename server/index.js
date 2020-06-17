@@ -30,6 +30,5 @@ app.use("/products", productRoutes);
 
 app.listen(PORT, () => {
   console.log(`server has started on port ${PORT}`)
-  console.log(`api docs are started at route http://localhost:5000/api-docs`);
-  
+  console.log(`api docs are started at route http://localhost:5000/api-docs`);  
 });

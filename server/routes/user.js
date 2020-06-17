@@ -67,13 +67,14 @@ route.post("/sign_in", async (req, res) => {
     );
     const hash = rows.rows[0].password;
     const userId = rows.rows[0].id;
-    bcrypt.compare(password, hash, (err, result) => {
+    bcrypt.compare(password, hash, async (err, result) => {
       let secret = Str.random(32);
-      const insertIntoLogins = pool.query(
+      const insertIntoLogins = await pool.query(
         `INSERT INTO logins(user_id,secret,created_at,updated_at)
                                   VALUES($1,$2,$3,$4) returning *`,
         [userId, secret, new Date(), new Date()]
       );
+    //   console.log(insertIntoLogins.rows);
       result
         ? res.status(200).json({
             userId,
