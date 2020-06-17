@@ -1,44 +1,38 @@
 import React, { Component, Fragment } from "react";
-
-import fetch from "isomorphic-unfetch";
+import Link from "next/link";
+import axios from "axios";
+import matchSorter from "match-sorter";
 
 import { Navbar, authHeaders } from "../src/utils";
 import { withStyles } from "@material-ui/core/styles";
-
 import { Button, Typography } from "@material-ui/core";
 
-import Link from "next/link";
-
-import axios from "axios";
-
-import matchSorter from "match-sorter";
-
-const productStyles = theme => ({
+const productStyles = (theme) => ({
   name: {
     marginTop: theme.spacing(0.5),
     height: theme.spacing(4.5),
     display: "flex",
     marginLeft: "10px",
-    maxWidth: "120px"
+    maxWidth: "120px",
   },
   product: {
-    marginBottom: "15px"
+    marginBottom: "15px",
   },
   image: {
     margin: "10px",
     height: "200px",
-    width: "220px"
-  }
+    width: "220px",
+  },
 });
 
 class _Product extends Component {
-  handleCart = event => {
+  handleCart = (event) => {
     const { product } = this.props;
     event.preventDefault();
     axios
       .post("/cart", { product_id: product.id }, authHeaders())
       .then(() => this.props.fetchCart())
-      .catch(error => {
+      .catch((error) => {
         console.log(error);
       });
   };
@@ -47,7 +41,7 @@ class _Product extends Component {
     // FIXME ssr html does not match intial react render on browser if user is logged in
     let addCart;
     const { classes, product, cartProducts } = this.props;
-    if (cartProducts.some(cartProduct => product.id === cartProduct.id)) {
+    if (cartProducts.some((cartProduct) => product.id === cartProduct.id)) {
       addCart = (
         <Link href="/viewcart">
           <Button color="primary" variant="contained">
@@ -85,18 +79,18 @@ class _Product extends Component {
 
 const Product = withStyles(productStyles)(_Product);
 
-const productsStyles = theme => ({
+const productsStyles = (theme) => ({
   section: {
     margin: "20px",
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))"
-  }
+    gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+  },
 });
 
 class _Products extends Component {
   static getInitialProps = async () => {
-    const res = await fetch(`${process.env.API_URL}/products`);
-    const products = await res.json();
+    const res = await axios.get("/products");
+    const products = res.data;
     return { products };
   };
 
@@ -105,15 +99,15 @@ class _Products extends Component {
     this.state = {
       products: props.products || [],
       cartProducts: props.cartProducts || [],
-      search: ""
+      search: "",
     };
   }
 
   componentDidMount() {
     axios
       .get("/products")
-      .then(response => this.setState({ products: response.data }))
-      .catch(error => {
+      .then((response) => this.setState({ products: response.data }))
+      .catch((error) => {
         console.log(error);
       });
 
@@ -124,16 +118,16 @@ class _Products extends Component {
   fetchCart = () => {
     axios
       .get("/cart", authHeaders())
-      .then(response => {
+      .then((response) => {
         this.setState({ cartProducts: response.data });
       })
-      .catch(error => {
+      .catch((error) => {
         console.log(error);
       });
   };
-  setSearch = event => {
+  setSearch = (event) => {
     this.setState({
-      search: event.target.value
+      search: event.target.value,
     });
   };
   render() {
@@ -144,7 +138,7 @@ class _Products extends Component {
       <Fragment>
         <Navbar search={search} setSearch={this.setSearch} />
         <div className={classes.section}>
-          {filteredProducts.map(product => (
+          {filteredProducts.map((product) => (
             <Product
               product={product}
               key={product.id}
