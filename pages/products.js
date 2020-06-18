@@ -25,6 +25,27 @@ const productStyles = (theme) => ({
   },
 });
 
+function OffersComponent() {
+  return (
+    <div style={{ display: "flex", msOverflowX: "hidden" }}>
+      <div style={{ width: "1200px", background: "red",height:"500px" }}></div>
+      <img
+        src="/static/flip1.png"
+        style={{ height: "250px", width: "1750px" }}
+      />
+      <div></div>
+      <img
+        src="/static/flip2.png"
+        style={{ height: "250px", width: "1750px" }}
+      />
+      <img
+        src="/static/flip3.png"
+        style={{ height: "250px", width: "1750px" }}
+      />
+    </div>
+  );
+}
+
 class _Product extends Component {
   handleCart = (event) => {
     const { product } = this.props;
@@ -137,6 +158,7 @@ class _Products extends Component {
     return (
       <Fragment>
         <Navbar search={search} setSearch={this.setSearch} />
+        <OffersComponent />
         <div className={classes.section}>
           {filteredProducts.map((product) => (
             <Product
