@@ -41,7 +41,6 @@ const navbarStyles = (theme) => ({
     width: "100%",
     padding: "0px 20px",
     borderRadius: "3px",
-    // width:"400px"
   },
   login: {
     color: "white",
@@ -65,30 +64,41 @@ const useStyles = makeStyles((theme) => ({
 
 export default function MouseOverPopover({ name }) {
   const classes = useStyles();
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const timeOutId = useRef("");
+  // const anchorEl = useRef(null);
+  const [open, setOpen] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
 
-  const handlePopoverOpen = (event) => {
+  const handleMouseEnter = (event) => {
+    console.log("handleMouse Enter");
     setAnchorEl(event.currentTarget);
+    setOpen(true);
   };
 
-  const handlePopoverClose = () => {
-    console.log(typeof anchorEl);
-    // if (anchorEl === null) {
-    const settime = setTimeout(() => setAnchorEl(null), 500);
-    // }
-    console.log(settime);
+  const handleMouseLeave = () => {
+    console.log("Handle Mouse Leave");
+    timeOutId.current = setTimeout(() => {
+      setAnchorEl(null);
+      setOpen(false);
+    }, 100);
   };
 
-  const open = Boolean(anchorEl);
-  console.log(anchorEl);
+  const handlePopoverEnter = () => {
+    console.log("Handle popover Enter");
+    if (anchorEl) {
+      clearTimeout(timeOutId.current);
+    }
+  };
+
   return (
     <div>
       <Typography
         aria-owns={open ? "mouse-over-popover" : undefined}
         aria-haspopup="true"
-        onMouseEnter={handlePopoverOpen}
-        onMouseLeave={handlePopoverClose}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
         className={classes.user}
+        style={{ border: "1px solid black", padding: "10px", margin: "20px" }}
       >
         {name} {anchorEl ? <ExpandLessIcon /> : <ExpandMoreIcon />}
       </Typography>
@@ -108,27 +118,28 @@ export default function MouseOverPopover({ name }) {
           vertical: "top",
           horizontal: "left",
         }}
-        // onEntered={handlePopoverOpen}
-        // onClose={handlePopoverClose}
-        disableRestoreFocus
-        // onEnter={handlePopoverOpen}
       >
-        <Link href="/account">
-          <Typography>My Profile</Typography>
-        </Link>
-        <Typography>SuperCoin Zone </Typography>
-        <Typography>Flipkart Plus Zone</Typography>
-        <Link href="/orders">
-          <Button color="inherit">ORDERS</Button>
-        </Link>
-        <Typography>Wishlist</Typography>
-        <Typography>My Charts</Typography>
+        <div
+          onMouseOver={handlePopoverEnter}
+          style={{ padding: "10px", margin: "20px", border: "1px solid red" }}
+        >
+          <Link href="/account">
+            <Typography>My Profile</Typography>
+          </Link>
+          <Typography>SuperCoin Zone </Typography>
+          <Typography>Flipkart Plus Zone</Typography>
+          <Link href="/orders">
+            <Button color="inherit">ORDERS</Button>
+          </Link>
+          <Typography>Wishlist</Typography>
+          <Typography>My Charts</Typography>
 
-        <Typography>Coupons</Typography>
-        <Typography>Gift Cards</Typography>
-        <Typography>notifications</Typography>
-        <div>
-          <Button>SIGNOUT</Button>
+          <Typography>Coupons</Typography>
+          <Typography>Gift Cards</Typography>
+          <Typography>notifications</Typography>
+          <div>
+            <Button>SIGNOUT</Button>
+          </div>
         </div>
       </Popover>
     </div>
@@ -136,8 +147,8 @@ export default function MouseOverPopover({ name }) {
 }
 
 function _Navbar({ classes, search, setSearch }) {
-  const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
+  // const [anchorEl, setAnchorEl] = useState(null);
+  // const open = Boolean(anchorEl);
 
   const onSignout = () => {
     localStorage.removeItem("secret");
