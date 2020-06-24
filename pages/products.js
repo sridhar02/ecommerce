@@ -1,13 +1,14 @@
-import React, { Component, Fragment } from "react";
+import React, { Component, Fragment, useState } from "react";
 import Link from "next/link";
 import axios from "axios";
 import matchSorter from "match-sorter";
 
-import { Navbar, authHeaders } from "../src/utils";
 import { withStyles } from "@material-ui/core/styles";
-import { Button, Typography } from "@material-ui/core";
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import { Button, Typography, makeStyles } from "@material-ui/core";
+import ChevronRightIcon from "@material-ui/icons/ChevronRight";
+import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
+
+import { Navbar, authHeaders } from "../src/utils";
 
 const productStyles = (theme) => ({
   name: {
@@ -28,72 +29,79 @@ const productStyles = (theme) => ({
 });
 
 const images = ["/static/flip1.png", "/static/flip2.png", "/static/flip3.png"];
-let slides = [1, 2, 3, 4, 5];
+
+const useSliderStyles = makeStyles((theme) => ({
+  // console.log(props)
+  sliderContainer: {
+    border: "1px solid red",
+    width: "100%",
+    margin: 0,
+    padding: 0,
+    display: "flex",
+    alignItems: "center",
+    position: "relative",
+    overflow: "hidden",
+  },
+  imgStyles: (props) => ({
+    border: "1px solid blue",
+    minWidth: "100%",
+    height: "250px",
+    position: "relative",
+    // transform: `translateX(100)`,
+    transition: ".5s",
+    overflow: "hidden",
+  }),
+  moveLeftButton: {
+    position: "absolute",
+    top: "50%",
+    left: 0,
+    transform: `translateY(-50%)`,
+    height: "80%",
+    color: "#fff",
+  },
+  moveRightButton: {
+    position: "absolute",
+    top: "50%",
+    right: 0,
+    transform: `translateY(-50%)`,
+    height: "80%",
+    color: "#fff",
+  },
+  icon: {
+    fontSize: "50px",
+  },
+}));
+// setTimeout();
 function SliderImages() {
-  const [X, setX] = React.useState(0);
+  const [X, setX] = useState(0);
+  let props = { X };
   const goLeft = () => {
     X === 0 ? setX(-100 * (images.length - 1)) : setX(X + 100);
   };
   const goRight = () => {
     X === -100 * (images.length - 1) ? setX(0) : setX(X - 100);
   };
+  const classes = useSliderStyles(X);
+  setTimeout(() => {
+    goRight();
+  }, 5000);
   return (
-    <div
-      style={{
-        border: "1px solid red",
-        width: "100%",
-        margin: 0,
-        padding: 0,
-        display: "flex",
-        alignItems: "center",
-        position: "relative",
-        overflow:"hidden"
-      }}
-    >
+    <div className={classes.sliderContainer}>
       {images.map((slide, index) => (
         <img
           src={slide}
           key={index}
           style={{
-            border: "1px solid blue",
-            minWidth: "100%",
-            height: "250px",
-            // width: "1750px",
-            // height: "80vh",
-            position: "relative",
             transform: `translateX(${X}%)`,
-            transition: ".5s",
-            overflow:"hidden" 
           }}
+          className={classes.imgStyles}
         />
       ))}
-      <Button
-        style={{
-          position: "absolute",
-          top: "50%",
-          left: 0,
-          transform: `translateY(-50%)`,
-          height: "80%",
-          color:"#fff",
-          
-        }}
-        onClick={goLeft}
-      >
-        <ChevronLeftIcon style={{fontSize: "50px"}} />
+      <Button className={classes.moveLeftButton} onClick={goLeft}>
+        <ChevronLeftIcon style={{ fontSize: "50px" }} />
       </Button>
-      <Button
-        onClick={goRight}
-        style={{
-          position: "absolute",
-          top: "50%",
-          right: 0,
-          transform: `translateY(-50%)`,
-          height: "80%",
-          color:"#fff",
-          // fontSize: "50px"
-        }}
-      >
-        <ChevronRightIcon style={{fontSize: "50px"}}/>
+      <Button onClick={goRight} className={classes.moveRightButton}>
+        <ChevronRightIcon className={classes.icon} />
       </Button>
     </div>
   );
