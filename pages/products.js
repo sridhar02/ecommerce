@@ -6,6 +6,8 @@ import matchSorter from "match-sorter";
 import { Navbar, authHeaders } from "../src/utils";
 import { withStyles } from "@material-ui/core/styles";
 import { Button, Typography } from "@material-ui/core";
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 
 const productStyles = (theme) => ({
   name: {
@@ -25,23 +27,74 @@ const productStyles = (theme) => ({
   },
 });
 
-function OffersComponent() {
+const images = ["/static/flip1.png", "/static/flip2.png", "/static/flip3.png"];
+let slides = [1, 2, 3, 4, 5];
+function SliderImages() {
+  const [X, setX] = React.useState(0);
+  const goLeft = () => {
+    X === 0 ? setX(-100 * (images.length - 1)) : setX(X + 100);
+  };
+  const goRight = () => {
+    X === -100 * (images.length - 1) ? setX(0) : setX(X - 100);
+  };
   return (
-    <div style={{ display: "flex", msOverflowX: "hidden" }}>
-      <div style={{ width: "1200px", background: "red",height:"500px" }}></div>
-      <img
-        src="/static/flip1.png"
-        style={{ height: "250px", width: "1750px" }}
-      />
-      <div></div>
-      <img
-        src="/static/flip2.png"
-        style={{ height: "250px", width: "1750px" }}
-      />
-      <img
-        src="/static/flip3.png"
-        style={{ height: "250px", width: "1750px" }}
-      />
+    <div
+      style={{
+        border: "1px solid red",
+        width: "100%",
+        margin: 0,
+        padding: 0,
+        display: "flex",
+        alignItems: "center",
+        position: "relative",
+        overflow:"hidden"
+      }}
+    >
+      {images.map((slide, index) => (
+        <img
+          src={slide}
+          key={index}
+          style={{
+            border: "1px solid blue",
+            minWidth: "100%",
+            height: "250px",
+            // width: "1750px",
+            // height: "80vh",
+            position: "relative",
+            transform: `translateX(${X}%)`,
+            transition: ".5s",
+            overflow:"hidden" 
+          }}
+        />
+      ))}
+      <Button
+        style={{
+          position: "absolute",
+          top: "50%",
+          left: 0,
+          transform: `translateY(-50%)`,
+          height: "80%",
+          color:"#fff",
+          
+        }}
+        onClick={goLeft}
+      >
+        <ChevronLeftIcon style={{fontSize: "50px"}} />
+      </Button>
+      <Button
+        onClick={goRight}
+        style={{
+          position: "absolute",
+          top: "50%",
+          right: 0,
+          transform: `translateY(-50%)`,
+          height: "80%",
+          color:"#fff",
+          // fontSize: "50px"
+        }}
+      >
+        <ChevronRightIcon style={{fontSize: "50px"}}/>
+      </Button>
     </div>
   );
 }
@@ -158,7 +211,7 @@ class _Products extends Component {
     return (
       <Fragment>
         <Navbar search={search} setSearch={this.setSearch} />
-        <OffersComponent />
+        <SliderImages />
         <div className={classes.section}>
           {filteredProducts.map((product) => (
             <Product
