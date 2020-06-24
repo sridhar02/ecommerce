@@ -47,7 +47,7 @@ const useSliderStyles = makeStyles((theme) => ({
     minWidth: "100%",
     height: "250px",
     position: "relative",
-    // transform: `translateX(100)`,
+    // transform: `translateX(props.X)`,
     transition: ".5s",
     overflow: "hidden",
   }),
@@ -71,20 +71,21 @@ const useSliderStyles = makeStyles((theme) => ({
     fontSize: "50px",
   },
 }));
-// setTimeout();
+
 function SliderImages() {
   const [X, setX] = useState(0);
-  let props = { X };
+  const classes = useSliderStyles(X);
   const goLeft = () => {
     X === 0 ? setX(-100 * (images.length - 1)) : setX(X + 100);
   };
   const goRight = () => {
     X === -100 * (images.length - 1) ? setX(0) : setX(X - 100);
   };
-  const classes = useSliderStyles(X);
+
   setTimeout(() => {
     goRight();
   }, 5000);
+
   return (
     <div className={classes.sliderContainer}>
       {images.map((slide, index) => (
