@@ -23,8 +23,8 @@ import ExpandLessIcon from "@material-ui/icons/ExpandLess";
 
 const navbarStyles = (theme) => ({
   button: {
-    padding: theme.spacing(1.5),
-    margin: "0 10px",
+    padding: theme.spacing(1),
+    // margin: "0 10px",
     fontWeight: "bold",
     fontSize: theme.spacing(2.5),
     color: "white",
@@ -39,14 +39,19 @@ const navbarStyles = (theme) => ({
     backgroundColor: "white",
     margin: "8px 0px",
     width: "100%",
+    maxWidth: "546px",
     padding: "0px 20px",
-    borderRadius: "3px",
+    // borderRadius: "3px",
   },
   login: {
     color: "white",
   },
   root: {
     display: "flex",
+    // height: "60px",
+  },
+  rightButtons: {
+    margin: "0 10px",
   },
 });
 
@@ -95,10 +100,10 @@ export default function MouseOverPopover({ name }) {
       <Typography
         aria-owns={open ? "mouse-over-popover" : undefined}
         aria-haspopup="true"
-        onMouseEnter={handleMouseEnter}
+        onClick={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         className={classes.user}
-        style={{ border: "1px solid black", padding: "10px", margin: "20px" }}
+        // style={{ border: "1px solid black", padding: "10px", margin: "20px" }}
       >
         {name} {anchorEl ? <ExpandLessIcon /> : <ExpandMoreIcon />}
       </Typography>
@@ -160,14 +165,18 @@ function _Navbar({ classes, search, setSearch }) {
   if (typeof window !== "undefined" && localStorage.getItem("secret")) {
     authorized = (
       <div className="d-none d-md-block col-md-6" className={classes.root}>
-        <MouseOverPopover name={"username"} />
+        <MouseOverPopover name={"username"} className={classes.rightButtons} />
         <Link href="/viewcart">
-          <Button color="inherit">
+          <Button color="inherit" className={classes.rightButtons}>
             <ShoppingCart />
             CART
           </Button>
         </Link>
-        <Button color="inherit" onClick={onSignout}>
+        <Button
+          color="inherit"
+          onClick={onSignout}
+          className={classes.rightButtons}
+        >
           SIGNOUT
         </Button>
       </div>
@@ -207,30 +216,42 @@ function _Navbar({ classes, search, setSearch }) {
   return (
     <div className={classes.root}>
       <AppBar position="static">
-        <div className="container">
-          <div className="row">
-            <div className="col-4 col-md-2">
-              <Link href="/products">
-                <img className={classes.flipkart} src="/static/logo.png" />
-              </Link>{" "}
-            </div>
-            {iconAuthorized}
-            <div className="col-12 col-md-4">
-              <InputBase
-                id="outlined-bare"
-                variant="outlined"
-                inputProps={{ "aria-label": "bare" }}
-                className={classes.searchInput}
-                placeholder="Search products"
-                value={search}
-                onChange={setSearch}
-                endAdornment={<SearchIcon />}
-              />
-            </div>
-            {authorized}
-          </div>
-        </div>
+        <NavbarNew
+          classes={classes}
+          search={search}
+          setSearch={setSearch}
+          authorized={authorized}
+        />
       </AppBar>
+    </div>
+  );
+}
+
+function NavbarNew({ classes, search, setSearch, authorized }) {
+  return (
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "space-around",
+        margin: "0 400px",
+      }}
+    >
+      <div style={{ display: "flex", flexGrow: 1 }}>
+        <Link href="/products">
+          <img className={classes.flipkart} src="/static/logo.png" />
+        </Link>
+        <InputBase
+          id="outlined-bare"
+          variant="outlined"
+          inputProps={{ "aria-label": "bare" }}
+          className={classes.searchInput}
+          placeholder="Search products"
+          value={search}
+          onChange={setSearch}
+          endAdornment={<SearchIcon />}
+        />
+      </div>
+      {authorized}
     </div>
   );
 }
