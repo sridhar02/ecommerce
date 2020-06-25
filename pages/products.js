@@ -1,4 +1,4 @@
-import React, { Component, Fragment, useState } from "react";
+import React, { Component, Fragment, useState, useEffect } from "react";
 import Link from "next/link";
 import axios from "axios";
 import matchSorter from "match-sorter";
@@ -30,6 +30,14 @@ const productStyles = (theme) => ({
 
 const images = ["/static/flip1.png", "/static/flip2.png", "/static/flip3.png"];
 
+function ImageComponent({ image }) {
+  return (
+    <div>
+      <img src={image} alt="banner" />
+    </div>
+  );
+}
+
 const useSliderStyles = makeStyles((theme) => ({
   // console.log(props)
   sliderContainer: {
@@ -56,16 +64,16 @@ const useSliderStyles = makeStyles((theme) => ({
     top: "50%",
     left: 0,
     transform: `translateY(-50%)`,
-    height: "80%",
-    color: "#fff",
+    color: "#9c9b9d",
+    border: "0",
   },
   moveRightButton: {
     position: "absolute",
     top: "50%",
     right: 0,
     transform: `translateY(-50%)`,
-    height: "80%",
-    color: "#fff",
+    color: "#9c9b9d",
+    border: "0",
   },
   icon: {
     fontSize: "50px",
@@ -82,9 +90,11 @@ function SliderImages() {
     X === -100 * (images.length - 1) ? setX(0) : setX(X - 100);
   };
 
-  setTimeout(() => {
-    goRight();
-  }, 5000);
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     goRight();
+  //   }, 5000);
+  // }, []);
 
   return (
     <div className={classes.sliderContainer}>
@@ -168,6 +178,14 @@ const productsStyles = (theme) => ({
     display: "grid",
     gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
   },
+  container2: {
+    margin: "0 112px",
+    padding: theme.spacing(1),
+    backgroundColor: "#fff",
+  },
+  fragemnt: {
+    backgroundColor: "#f1f3f6",
+  },
 });
 
 class _Products extends Component {
@@ -218,20 +236,23 @@ class _Products extends Component {
     const { cartProducts, products, search } = this.state;
     let filteredProducts = matchSorter(products, search, { keys: ["name"] });
     return (
-      <Fragment>
+      <div className={classes.fragemnt}>
         <Navbar search={search} setSearch={this.setSearch} />
-        <SliderImages />
-        <div className={classes.section}>
-          {filteredProducts.map((product) => (
-            <Product
-              product={product}
-              key={product.id}
-              cartProducts={cartProducts}
-              fetchCart={this.fetchCart}
-            />
-          ))}
+        <div className={classes.container2}>
+          <ImageComponent image="../static/banner.png" />
+          <SliderImages />
+          <div className={classes.section}>
+            {filteredProducts.map((product) => (
+              <Product
+                product={product}
+                key={product.id}
+                cartProducts={cartProducts}
+                fetchCart={this.fetchCart}
+              />
+            ))}
+          </div>
         </div>
-      </Fragment>
+      </div>
     );
   }
 }
