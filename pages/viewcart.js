@@ -20,25 +20,25 @@ import axios from "axios";
 
 import cx from "classnames";
 
-const emptyCartStyles = theme => ({
+const emptyCartStyles = (theme) => ({
   image: {
     textAlign: "center",
     padding: "30px 0 36px",
-    background: "#fff"
+    background: "#fff",
   },
   link: {
     textDecoration: "none",
-    color: "white"
+    color: "white",
   },
   button: {
-    textAlign: "center"
+    textAlign: "center",
   },
   emptySection: {
     border: "1px solid #eceff1",
     margin: "20px",
     padding: "20px",
-    backgroundColor: "white"
-  }
+    backgroundColor: "white",
+  },
 });
 
 function _EmptyCart(props) {
@@ -65,80 +65,80 @@ function _EmptyCart(props) {
 
 const EmptyCart = withStyles(emptyCartStyles)(_EmptyCart);
 
-const productStyles = theme => ({
+const productStyles = (theme) => ({
   image: {
     height: "72px",
-    width: "100%"
+    width: "100%",
   },
   textField: {
     [theme.breakpoints.down("md")]: {
       paddingTop: theme.spacing(1),
       backgroundColor: "white",
       borderRadius: "2px",
-      borderTop: "1px solid #ccc"
-    }
+      borderTop: "1px solid #ccc",
+    },
   },
   productSection: {
     [theme.breakpoints.up("md")]: {
       margin: theme.spacing(1),
       padding: theme.spacing(2),
-      border: "1px solid #ccc"
-    }
+      border: "1px solid #ccc",
+    },
   },
   icons: {},
   productDetails: {
     paddingTop: theme.spacing(1),
-    backgroundColor: "white"
+    backgroundColor: "white",
   },
   quantity: {
     backgroundColor: "white",
-    marginBottom: theme.spacing(1)
+    marginBottom: theme.spacing(1),
   },
   product: {
     fontSize: "16px",
     fontWeight: "bold",
-    color: "black"
+    color: "black",
   },
   icon: {
     height: 16,
-    width: 16
-  }
+    width: 16,
+  },
 });
 
 class _Product extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      quantity: props.product.quantity
+      quantity: props.product.quantity,
     };
   }
 
-  handleIncrement = event => {
+  handleIncrement = (event) => {
     this.setState({
-      quantity: this.state.quantity + 1
+      quantity: this.state.quantity + 1,
     });
     axios
       .put(
         "/cart",
         {
           product_id: this.props.product.id,
-          quantity: this.state.quantity + 1
+          quantity: this.state.quantity + 1,
         },
         authHeaders()
       )
       .then(() => this.props.fetchCart())
-      .catch(error => {
+      .catch((error) => {
         console.log(error);
       });
   };
 
-  handleDecrement = event => {
+  handleDecrement = (event) => {
     if (this.state.quantity === 1) {
       return;
     }
 
     this.setState({
-      quantity: this.state.quantity - 1
+      quantity: this.state.quantity - 1,
     });
 
     axios
@@ -146,7 +146,7 @@ class _Product extends Component {
         "/cart",
         {
           product_id: this.props.product.id,
-          quantity: this.state.quantity - 1
+          quantity: this.state.quantity - 1,
         },
         authHeaders()
       )
@@ -191,24 +191,24 @@ class _Product extends Component {
 }
 const Product = withStyles(productStyles)(_Product);
 
-const priceStyles = theme => ({
+const priceStyles = (theme) => ({
   priceDetails: {
     [theme.breakpoints.up("md")]: {
       borderBottom: "1px solid #ccc",
       padding: theme.spacing(1.8),
-      Color: "#878787"
-    }
+      Color: "#878787",
+    },
   },
   priceSection: {
     [theme.breakpoints.up("md")]: {
       marginTop: theme.spacing(5),
-      border: "1px solid #ccc"
-    }
+      border: "1px solid #ccc",
+    },
   },
   delivery: {},
   alignment: {
-    marginBottom: theme.spacing(1)
-  }
+    marginBottom: theme.spacing(1),
+  },
 });
 
 class _Price extends Component {
@@ -238,29 +238,31 @@ class _Price extends Component {
 
 const Price = withStyles(priceStyles)(_Price);
 
-const cartStyles = theme => ({
+const cartStyles = (theme) => ({
   mycart: {
-    margin: theme.spacing(1)
+    margin: theme.spacing(1),
   },
   mainSection: {
     border: "1px solid #ccc",
-    backgroundColor: "white"
+    backgroundColor: "white",
   },
   placeOrder: {},
   sideSection: {
-    border: "1px solid #ccc"
+    border: "1px solid #ccc",
   },
   grandTotal: {
     border: "1px solid #ccc",
-    margin: theme.spacing(1)
-  }
+    margin: theme.spacing(1),
+  },
+  section: {
+  },
 });
 
 class _Cart extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      products: props.products || []
+      products: props.products || [],
     };
   }
 
@@ -271,22 +273,22 @@ class _Cart extends Component {
   fetchCart = () => {
     axios
       .get("/cart", authHeaders())
-      .then(response =>
+      .then((response) =>
         this.setState({
-          products: response.data
+          products: response.data,
         })
       )
-      .catch(error => {
+      .catch((error) => {
         console.log(error);
       });
   };
 
-  handleOrder = event => {
+  handleOrder = (event) => {
     event.preventDefault();
     axios
       .post("/orders", {}, authHeaders())
       .then(() => Router.push("/orders"))
-      .catch(error => {
+      .catch((error) => {
         console.log(error);
       });
   };
@@ -311,7 +313,7 @@ class _Cart extends Component {
                 <Typography className={classes.mycart}>
                   My Cart ({products.length})
                 </Typography>
-                {products.map(product => (
+                {products.map((product) => (
                   <Product
                     product={product}
                     key={product.id}
